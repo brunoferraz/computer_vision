@@ -18,6 +18,16 @@
 
 using namespace Eigen;
 using namespace std;
+
+struct bounds{
+    float top;
+    float left;
+    float right;
+    float bottom;
+    float dx;
+    float dy;
+};
+
 class ImageViewer : public QLabel
 {
     Q_OBJECT
@@ -25,7 +35,7 @@ class ImageViewer : public QLabel
     QVector<QPoint> getSortedPolygonPoints();
     MatrixXf createTransformMatrix(QVector<QPoint>bp,QVector<QPoint>rp);
     void showResult();
-    void getImageResultBounds();
+    bounds getImageResultBounds();
 public:
     QVector<Pin*> pinlist;
     float* scale;
