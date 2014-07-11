@@ -138,6 +138,10 @@ MatrixXf ImageViewer::createTransformMatrix(QVector<QPoint> bp, QVector<QPoint> 
 
 void ImageViewer::showResult()
 {
+    for(int i = 0; i < pinlist.count(); i ++){
+        pinlist[i]->hide();
+    }
+
     float n_width = this->width();
     float n_height = this->height();
 
@@ -243,6 +247,7 @@ void ImageViewer::adjustImage(float w, float h){
 
     H = createTransformMatrix(blist, rlist);
     Hi = H.inverse();
+
 
     showResult();
 }
