@@ -15,10 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageviewer.cpp \
-    pin.cpp
+    pin.cpp \
+    pinmanager.cpp \
+    line.cpp \
+    cvlib.cpp
 
 HEADERS  += mainwindow.h \
     imageviewer.h \
-    pin.h
+    pin.h \
+    pinmanager.h \
+    line.h \
+    cvlib.h
 
 FORMS    += mainwindow.ui

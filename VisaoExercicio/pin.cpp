@@ -12,7 +12,12 @@ Pin::Pin(QWidget *parent, QPoint p) :
     move(QPoint(p.x()-size/2, p.y()-size/2));
     setMaximumHeight(size);
     setStyleSheet("background-color:transparent;");
-//    qDebug() << p;
+    //    qDebug() << p;
+}
+
+QPoint Pin::getDrawCenter()
+{
+    return QPoint((this->x() + size/2),(this->y()+ size/2));
 }
 void Pin::paintEvent(QPaintEvent *)
 {

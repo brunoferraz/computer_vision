@@ -10,7 +10,7 @@ class Pin : public QLabel
     Q_OBJECT
 public:
     explicit Pin(QWidget *parent = 0, QPoint p = QPoint(0, 0));
-
+    QPoint getDrawCenter();
 signals:
 
 protected:

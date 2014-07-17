@@ -7,37 +7,28 @@
 #include <QImage>
 #include <QVector>
 #include "pin.h"
+#include "pinmanager.h"
 #include <QLayout>
 #include <QList>
 #include <eigen3/Eigen/Dense>
 #include <stdio.h>
 #include <iostream>
 #include <QRect>
+#include <cvlib.h>
 
 #define MAX_PINS 4
 
 using namespace Eigen;
 using namespace std;
 
-struct bounds{
-    float top;
-    float left;
-    float right;
-    float bottom;
-    float dx;
-    float dy;
-};
-
 class ImageViewer : public QLabel
 {
     Q_OBJECT
-    void createPin(QPoint pos= QPoint(0,0));
-    QVector<QPoint> getSortedPolygonPoints();
-    MatrixXf createTransformMatrix(QVector<QPoint>bp,QVector<QPoint>rp);
     void showResult();
     bounds getImageResultBounds();
 public:
     QVector<Pin*> pinlist;
+    PinManager *pinmanager;
     float* scale;
     bool isDebug;
 
