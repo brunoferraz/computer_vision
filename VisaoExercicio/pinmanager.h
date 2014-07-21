@@ -11,10 +11,12 @@
 class PinManager : public QWidget
 {
     Q_OBJECT
+    void clearPinManager();
 public:
     explicit PinManager(QWidget *parent = 0);
     void createPin(QPoint p);
     void createLine(Pin p1, Pin p2);
+
     QVector<QPoint> getSortedPolygonPoints();
     void hide_pins();
     void setType(int t);

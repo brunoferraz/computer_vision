@@ -15,6 +15,9 @@ void PinManager::createPin(QPoint pos)
     pinlist.push_back(pin);
     switch (this->type) {
     case TYPE_TWO:
+
+        break;
+    case TYPE_THREE:
         if(pinlist.count()%2 == 0){
             //Get two last pins created to make a line
             Line *line = new Line(PinManager::parentWidget(),pinlist.at(pinlist.count()-1), pinlist.at(pinlist.count()-2));
@@ -90,13 +93,26 @@ void PinManager::setType(int t)
         MaxPins = 4;
         break;
     case TYPE_TWO:
-        MaxPins = 8;
+        MaxPins = 4;
+        clearPinManager();
         break;
     case TYPE_THREE:
-
+        MaxPins = 8;
         break;
     default:
         break;
     }
 
 }
+
+void PinManager::clearPinManager()
+{
+    if(pinlist.count()!=0){
+        for(int i = 0; i< pinlist.count(); i++){
+            delete pinlist.at(i);
+            //pinlist.pop_front();
+        }
+    }
+    pinlist.clear();
+}
+

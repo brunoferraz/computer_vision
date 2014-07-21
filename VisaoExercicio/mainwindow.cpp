@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    ui->chooseButton->hide();
     //DEBUG IS STARTED BY PATH PARAMETER ON OPEN METHOD
     image = new ImageViewer(ui->widget);
     QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/brahma01.jpg");
@@ -30,6 +30,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_adjustButton_clicked()
 {
-    qDebug() << "vcvcxvcx";
     image->adjustImage(819,613);
+    ui->chooseButton->show();
 }

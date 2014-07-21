@@ -6,6 +6,7 @@
 #include <QPoint>
 #include <QImage>
 #include <QRect>
+#include <QSize>
 
 struct bounds{
     float top;
@@ -26,8 +27,8 @@ public:
 //    static bounds getImageResultBounds();
     static MatrixXf calculate_H(QVector<QPoint> bp, QVector<QPoint> rp);
     static MatrixXf homography(MatrixXf v,  Matrix3f h); //Receiver vector and transform Matrix
-    static QImage generateImage(QImage imageBase, QRect rect, Matrix3f h);
-
+    static QImage generateImage(QImage imageBase, QSize size, QVector<QPoint> renderArea, Matrix3f h);
+    static bounds getHomographyBounds(QVector<QPoint> bp, Matrix3f H);
 };
 
 #endif // CVLIB_H
