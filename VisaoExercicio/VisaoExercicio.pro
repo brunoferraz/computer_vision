@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     pin.cpp \
     pinmanager.cpp \
     line.cpp \
-    cvlib.cpp
+    cvlib.cpp \
+    imageviewer_ex2.cpp
 
 HEADERS  += mainwindow.h \
     imageviewer.h \
     pin.h \
     pinmanager.h \
     line.h \
-    cvlib.h
+    cvlib.h \
+    imageviewer_ex2.h
 
 FORMS    += mainwindow.ui

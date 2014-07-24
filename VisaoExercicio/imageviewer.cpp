@@ -34,14 +34,7 @@ void ImageViewer::open(QString *path){
     if(path){
         isDebug = true;
         fileName = *path;
-//        pinmanager->createPin(QPoint(221,187));
-//        pinmanager->createPin(QPoint(278,200));
-//        pinmanager->createPin(QPoint(280,113));
-//        pinmanager->createPin(QPoint(223,119));
-        pinmanager->createPin(QPoint(184,27));
-        pinmanager->createPin(QPoint(200,328));
-        pinmanager->createPin(QPoint(368,238));
-        pinmanager->createPin(QPoint(367,67));
+        this->prepareDebug();
     }
     if(!isDebug){
         fileName = QFileDialog::getOpenFileName(this,
@@ -94,6 +87,7 @@ void ImageViewer::wheelEvent(QWheelEvent *ev){
     }else{
         this->set_Scale(*scale/1.2);
     }
+    qDebug() << *scale;
     ev->accept();
 }
 
@@ -148,4 +142,16 @@ void ImageViewer::chooseArea()
     setPixmap(QPixmap::fromImage(imageResult));
 
     pixmap();
+}
+
+void ImageViewer::prepareDebug()
+{
+    //        pinmanager->createPin(QPoint(221,187));
+    //        pinmanager->createPin(QPoint(278,200));
+    //        pinmanager->createPin(QPoint(280,113));
+    //        pinmanager->createPin(QPoint(223,119));
+    //        pinmanager->createPin(QPoint(184,27));
+    //        pinmanager->createPin(QPoint(200,328));
+    //        pinmanager->createPin(QPoint(368,238));
+    //        pinmanager->createPin(QPoint(367,67));
 }

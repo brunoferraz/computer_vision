@@ -24,7 +24,7 @@ using namespace std;
 class ImageViewer : public QLabel
 {
     Q_OBJECT
-    void showResult(QSize imgSize, QVector<QPoint> areaRender);
+
 public:
     QVector<Pin*> pinlist;
     PinManager *pinmanager;
@@ -41,6 +41,8 @@ public:
     void set_Scale(float factor);
     void adjustImage(float w, float h);
     void chooseArea();
+    void prepareDebug();
+    void showResult(QSize imgSize, QVector<QPoint> areaRender);
 signals:
 
 public slots:

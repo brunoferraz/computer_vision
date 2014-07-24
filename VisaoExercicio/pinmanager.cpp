@@ -1,6 +1,10 @@
 #include "pinmanager.h"
 #include "pin.h"
 #include <QDebug>
+#include <stdio.h>
+#include <iostream>
+
+using namespace std;
 
 PinManager::PinManager(QWidget *parent) :
     QWidget(parent)
@@ -13,16 +17,14 @@ void PinManager::createPin(QPoint pos)
     Pin *pin= new Pin(this->parentWidget(), pos);
     pin->show();
     pinlist.push_back(pin);
+//    qDebug() << this->type;
     switch (this->type) {
     case TYPE_TWO:
 
         break;
     case TYPE_THREE:
         if(pinlist.count()%2 == 0){
-            //Get two last pins created to make a line
-            Line *line = new Line(PinManager::parentWidget(),pinlist.at(pinlist.count()-1), pinlist.at(pinlist.count()-2));
-            line->show();
-            linelist.push_back(line);
+            createLine();
         }
         break;
     default:
@@ -78,10 +80,29 @@ QVector<QPoint> PinManager::getSortedPolygonPoints()
     return blist;
 }
 
+Vector3f PinManager::getHorizonLine()
+{
+    Vector3f horizonLine(3,1);
+    Vector3f vanishingPoint1(3,1);
+    Vector3f vanishingPoint2(3,1);
+
+    vanishingPoint1 = linelist.at(0)->projectiveLine.cross(linelist.at(1)->projectiveLine);
+    vanishingPoint2 = linelist.at(2)->projectiveLine.cross(linelist.at(3)->projectiveLine);
+
+    horizonLine = vanishingPoint1.cross(vanishingPoint2);
+
+    return horizonLine;
+}
+
 void PinManager::hide_pins()
 {
     for(int i = 0; i < pinlist.count(); i ++){
         pinlist[i]->hide();
+    }
+    if(type == TYPE_THREE){
+       for(int i = 0; i< linelist.count(); i++){
+            linelist[i]->hide();
+       }
     }
 }
 
@@ -103,6 +124,14 @@ void PinManager::setType(int t)
         break;
     }
 
+}
+
+void PinManager::createLine()
+{
+    //Get two last pins created to make a line
+    Line *line = new Line(PinManager::parentWidget(),pinlist.at(pinlist.count()-1), pinlist.at(pinlist.count()-2));
+    line->show();
+    linelist.push_back(line);
 }
 
 void PinManager::clearPinManager()

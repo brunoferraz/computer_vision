@@ -18,6 +18,7 @@ public:
     void createLine(Pin p1, Pin p2);
 
     QVector<QPoint> getSortedPolygonPoints();
+    Vector3f getHorizonLine();
     void hide_pins();
     void setType(int t);
     static const int TYPE_ONE = 0;
@@ -28,7 +29,7 @@ public:
     bool isGrabbing;
     QVector<Pin*> pinlist;
     QVector<Line*> linelist;
-
+    void createLine();
 signals:
 
 public slots:

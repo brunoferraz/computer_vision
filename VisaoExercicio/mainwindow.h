@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "imageviewer.h"
+#include "imageviewer_ex2.h"
 
 namespace Ui {
 class MainWindow;
@@ -15,6 +16,8 @@ class MainWindow : public QWidget
 public:
     explicit MainWindow(QWidget *parent = 0);
     ImageViewer *image;
+    ImageViewer_ex2 *image2;
+
     ~MainWindow();
 
 private slots:
