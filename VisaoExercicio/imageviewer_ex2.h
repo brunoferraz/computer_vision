@@ -10,6 +10,7 @@ public:
 
     void open(QString *path);
     void adjustImage(float w =0, float h =0);
+    void adjustimageAffineSimilarity();
     void prepareDebug();
     void showResult(QSize imgSize, QVector<QPoint> areaRender);
     MatrixXf Hp;

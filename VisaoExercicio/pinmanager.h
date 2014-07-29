@@ -11,7 +11,7 @@
 class PinManager : public QWidget
 {
     Q_OBJECT
-    void clearPinManager();
+
 public:
     explicit PinManager(QWidget *parent = 0);
     void createPin(QPoint p);
@@ -24,12 +24,14 @@ public:
     static const int TYPE_ONE = 0;
     static const int TYPE_TWO = 1;
     static const int TYPE_THREE = 2;
+    static const int TYPE_FOUR = 3;
     int type;
     int MaxPins;
     bool isGrabbing;
     QVector<Pin*> pinlist;
     QVector<Line*> linelist;
     void createLine();
+    void clearPinManager();
 signals:
 
 public slots:

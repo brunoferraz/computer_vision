@@ -27,6 +27,11 @@ void PinManager::createPin(QPoint pos)
             createLine();
         }
         break;
+    case TYPE_FOUR:
+        if(pinlist.count()%2 == 0){
+            createLine();
+        }
+        break;
     default:
         break;
     }

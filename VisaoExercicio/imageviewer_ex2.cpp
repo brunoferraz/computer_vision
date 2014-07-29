@@ -36,6 +36,14 @@ void ImageViewer_ex2::adjustImage(float w, float h)
     QVector<QPoint> areaRender;
     areaRender << QPoint(0,0) << QPoint(0, imgSize.height()) << QPoint(imgSize.width(), imgSize.height()) << QPoint(imgSize.width(), 0);
     showResult(imgSize, areaRender);
+    pinmanager->clearPinManager();
+    imageBase = imageResult;
+    pinmanager->setType(pinmanager->TYPE_FOUR);
+}
+
+void ImageViewer_ex2::adjustimageAffineSimilarity()
+{
+
 }
 
 void ImageViewer_ex2::mouseReleaseEvent(QMouseEvent *ev)
