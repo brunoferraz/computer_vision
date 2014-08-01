@@ -99,14 +99,21 @@ Vector3f PinManager::getHorizonLine()
     return horizonLine;
 }
 
+Vector3f PinManager::getLine(int i)
+{
+    Vector3f line(3,1);
+    line = linelist.at(i)->projectiveLine;
+    return line;
+}
+
 void PinManager::hide_pins()
 {
     for(int i = 0; i < pinlist.count(); i ++){
-        pinlist[i]->hide();
+        pinlist.at(i)->hide();
     }
-    if(type == TYPE_THREE){
+    if(type == TYPE_THREE || type == TYPE_FOUR){
        for(int i = 0; i< linelist.count(); i++){
-            linelist[i]->hide();
+            linelist.at(i)->hide();
        }
     }
 }
@@ -125,10 +132,13 @@ void PinManager::setType(int t)
     case TYPE_THREE:
         MaxPins = 8;
         break;
+    case TYPE_FOUR:
+        MaxPins = 8;
+        clearPinManager();
+        break;
     default:
         break;
     }
-
 }
 
 void PinManager::createLine()
@@ -148,5 +158,12 @@ void PinManager::clearPinManager()
         }
     }
     pinlist.clear();
+    if(linelist.count()!=0){
+        for(int j=0;j < linelist.count(); j++){
+            delete linelist.at(j);
+        }
+    }
+    linelist.clear();
+    qDebug() << linelist.count();
 }
 

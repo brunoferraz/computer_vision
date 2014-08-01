@@ -19,6 +19,7 @@ public:
 
     QVector<QPoint> getSortedPolygonPoints();
     Vector3f getHorizonLine();
+    Vector3f getLine(int i);
     void hide_pins();
     void setType(int t);
     static const int TYPE_ONE = 0;

@@ -42,6 +42,7 @@ public:
     void adjustImage(float w, float h);
     void chooseArea();
     void prepareDebug();
+    void printPoints();
     void showResult(QSize imgSize, QVector<QPoint> areaRender);
 signals:
 

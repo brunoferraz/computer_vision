@@ -82,12 +82,12 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *ev){
 }
 
 void ImageViewer::wheelEvent(QWheelEvent *ev){
-    if(ev->delta()>0){
-        this->set_Scale(*scale*1.2);
-    }else{
-        this->set_Scale(*scale/1.2);
-    }
-    qDebug() << *scale;
+//    if(ev->delta()>0){
+//        this->set_Scale(*scale*1.2);
+//    }else{
+//        this->set_Scale(*scale/1.2);
+//    }
+//    qDebug() << *scale;
     ev->accept();
 }
 
@@ -154,4 +154,12 @@ void ImageViewer::prepareDebug()
     //        pinmanager->createPin(QPoint(200,328));
     //        pinmanager->createPin(QPoint(368,238));
     //        pinmanager->createPin(QPoint(367,67));
+}
+
+void ImageViewer::printPoints()
+{
+    for(int i = 0; i < pinmanager->pinlist.count(); i++)
+    {
+        qDebug() << pinmanager->pinlist.at(i)->getDrawCenter();
+    }
 }

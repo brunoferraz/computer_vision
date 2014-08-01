@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     image2 = new ImageViewer_ex2(ui->widget);
     QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva.jpg");
     image2->open(str);
-    //image2->open(str);
+//    image2->open();
 }
 MainWindow::~MainWindow()
 {
