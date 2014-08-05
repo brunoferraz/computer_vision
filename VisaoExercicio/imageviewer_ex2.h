@@ -8,7 +8,7 @@ class ImageViewer_ex2 : public ImageViewer
 public:
     explicit ImageViewer_ex2(QWidget *parent = 0);
 
-    void open(QString *path);
+    void open(QString *path =0);
     void adjustImage(float w =0, float h =0);
     void adjustimageAffineSimilarity();
     void prepareDebug();

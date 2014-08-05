@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     pinmanager.cpp \
     line.cpp \
     cvlib.cpp \
-    imageviewer_ex2.cpp
+    imageviewer_ex2.cpp \
+    imageviewer_ex3.cpp
 
 HEADERS  += mainwindow.h \
     imageviewer.h \
@@ -27,6 +28,7 @@ HEADERS  += mainwindow.h \
     pinmanager.h \
     line.h \
     cvlib.h \
-    imageviewer_ex2.h
+    imageviewer_ex2.h \
+    imageviewer_ex3.h
 
 FORMS    += mainwindow.ui

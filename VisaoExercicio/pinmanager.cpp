@@ -32,6 +32,11 @@ void PinManager::createPin(QPoint pos)
             createLine();
         }
         break;
+    case TYPE_FIVE:
+        if(pinlist.count()%2 == 0){
+            createLine();
+        }
+        break;
     default:
         break;
     }
@@ -111,7 +116,7 @@ void PinManager::hide_pins()
     for(int i = 0; i < pinlist.count(); i ++){
         pinlist.at(i)->hide();
     }
-    if(type == TYPE_THREE || type == TYPE_FOUR){
+    if(type == TYPE_THREE || type == TYPE_FOUR || type == TYPE_FIVE){
        for(int i = 0; i< linelist.count(); i++){
             linelist.at(i)->hide();
        }
@@ -134,6 +139,10 @@ void PinManager::setType(int t)
         break;
     case TYPE_FOUR:
         MaxPins = 8;
+        clearPinManager();
+        break;
+    case TYPE_FIVE:
+        MaxPins = 20;
         clearPinManager();
         break;
     default:
@@ -164,6 +173,6 @@ void PinManager::clearPinManager()
         }
     }
     linelist.clear();
-    qDebug() << linelist.count();
+    //qDebug() << linelist.count();
 }
 

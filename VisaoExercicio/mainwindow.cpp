@@ -23,10 +23,14 @@ MainWindow::MainWindow(QWidget *parent) :
 //    image->open();
 //    image->set_Scale(0.7);
 
-    image2 = new ImageViewer_ex2(ui->widget);
+//    image2 = new ImageViewer_ex2(ui->widget);
+//    QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva.jpg");
+//    image2->open(str);
+
+    image3 = new ImageViewer_ex3(ui->widget);
     QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva.jpg");
-    image2->open(str);
-//    image2->open();
+    image3->open(str);
+
 }
 MainWindow::~MainWindow()
 {

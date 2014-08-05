@@ -26,6 +26,7 @@ public:
     static const int TYPE_TWO = 1;
     static const int TYPE_THREE = 2;
     static const int TYPE_FOUR = 3;
+    static const int TYPE_FIVE = 4;
     int type;
     int MaxPins;
     bool isGrabbing;

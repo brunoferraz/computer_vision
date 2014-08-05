@@ -29,6 +29,7 @@ Line::Line(QWidget *parent, Pin *p1, Pin *p2) :
     pd1 << pinlist.at(0)->x(), pinlist.at(0)->y(), 1;
     pd2 << pinlist.at(1)->x(), pinlist.at(1)->y(), 1;
     projectiveLine = pd1.cross(pd2);
+    //projectiveLine /= projectiveLine(2);
 }
 
 void Line::draw()
