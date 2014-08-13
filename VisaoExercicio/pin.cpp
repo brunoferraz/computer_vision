@@ -8,7 +8,7 @@
 Pin::Pin(QWidget *parent, QPoint p) :
     QLabel(parent)
 {
-    size = 10;
+    size = 4;
     move(QPoint(p.x()-size/2, p.y()-size/2));
 //    move(QPoint(p.x(), p.y()));
     setMaximumHeight(size);

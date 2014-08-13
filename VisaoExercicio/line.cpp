@@ -47,7 +47,7 @@ void Line::paintEvent(QPaintEvent *)
         poly << pinlist.at(i)->getDrawCenter();
     }
     QPen linepen;
-    linepen.setWidth(2);
+    linepen.setWidth(1);
     linepen.setColor(Qt::red);
 
     painter.setPen(linepen);

@@ -15,10 +15,11 @@ ImageViewer_ex2::ImageViewer_ex2(QWidget *parent) :
 void ImageViewer_ex2::open(QString *path)
 {
     ImageViewer::open(path);
-    //isDebug = false;
+    isDebug = false;
     if(isDebug){
         prepareDebug();
     }
+
 }
 
 void ImageViewer_ex2::adjustImage(float w, float h)

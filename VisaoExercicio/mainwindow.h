@@ -23,7 +23,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_adjustButton_clicked();
 
 private:
     Ui::MainWindow *ui;

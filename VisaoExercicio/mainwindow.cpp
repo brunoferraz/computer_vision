@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->chooseButton->hide();
+    //ui->widget->move(50,50);
 
     //DEBUG IS STARTED BY PATH PARAMETER ON OPEN METHOD
 //    image = new ImageViewer(ui->widget);
@@ -25,20 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    image2 = new ImageViewer_ex2(ui->widget);
 //    QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva.jpg");
-//    image2->open(str);
+//    image2->open();
 
     image3 = new ImageViewer_ex3(ui->widget);
-    QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva.jpg");
-    image3->open(str);
-
+//    QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/piso-perspectiva_original.jpg");
+    QString* str = new QString("/home/bruno/dev/computer_vision/build-VisaoExercicio-Desktop-Debug/assets/tile_flip.jpg");
+    image3->open();
+   // image3->set_Scale(0.7);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_adjustButton_clicked()
-{
-//    image->adjustImage(819,613);
-//    ui->chooseButton->show();
 }

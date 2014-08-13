@@ -45,11 +45,15 @@ void ImageViewer::open(QString *path){
     imageBase = QImage(fileName);
     setPixmap(QPixmap::fromImage(imageBase));
     pixmap();
+    parentWidget()->resize(QSize(int(imageBase.width()),int(imageBase.height())));
+    parentWidget()->parentWidget()->resize(QSize(int(imageBase.width() + 50),int(imageBase.height() + 50)));
 }
 
 void ImageViewer::set_Scale(float factor){
     *scale = factor;
     resize(factor * pixmap()->size());
+    parentWidget()->resize(QSize(int(factor * imageBase.width()),int(factor * imageBase.height())));
+    parentWidget()->parentWidget()->resize(QSize(int(factor * imageBase.width() + 50),int(factor * imageBase.height() + 50)));
 }
 
 void ImageViewer::showResult(QSize imgSize, QVector<QPoint> areaRender)
