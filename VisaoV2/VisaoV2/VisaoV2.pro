@@ -13,8 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    imagemanager.cpp \
+    displaywindow.cpp \
+    debugset.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    imagemanager.h \
+    displaywindow.h \
+    debugset.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    displaywindow.ui
