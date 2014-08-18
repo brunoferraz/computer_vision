@@ -16,12 +16,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imagemanager.cpp \
     displaywindow.cpp \
-    debugset.cpp
+    debugset.cpp \
+    renderarea.cpp \
+    pinmanager.cpp \
+    pin.cpp
 
 HEADERS  += mainwindow.h \
     imagemanager.h \
     displaywindow.h \
-    debugset.h
+    debugset.h \
+    renderarea.h \
+    pinmanager.h \
+    pin.h
 
 FORMS    += mainwindow.ui \
     displaywindow.ui

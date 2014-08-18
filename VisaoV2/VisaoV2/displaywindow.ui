@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="RenderArea" name="label">
      <property name="styleSheet">
       <string notr="true">background-color: rgb(136, 136, 136);</string>
      </property>
@@ -26,6 +26,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RenderArea</class>
+   <extends>QLabel</extends>
+   <header>renderarea.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

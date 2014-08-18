@@ -5,6 +5,7 @@
 #include "imagemanager.h"
 #include "displaywindow.h"
 #include <debugset.h>
+#include <QCloseEvent>
 
 #define WORK_0  0
 #define WORK_1  1
@@ -28,10 +29,11 @@ public:
     DisplayWindow displayWindow;
 
     void LoadImage();
+protected:
+    void closeEvent(QCloseEvent *ev);
 
 private slots:
     void on_pushButton_clicked();
-
     void on_bt_DebugMode_toggled(bool checked);
 
 private:

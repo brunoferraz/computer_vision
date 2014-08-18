@@ -32,6 +32,13 @@ void MainWindow::LoadImage()
     displayWindow.showImage(img);
     displayWindow.show();
 }
+
+void MainWindow::closeEvent(QCloseEvent *ev)
+{
+    displayWindow.close();
+    ev->accept();
+}
+
 void MainWindow::setupProgram()
 {
     STATE = WORK_0;
