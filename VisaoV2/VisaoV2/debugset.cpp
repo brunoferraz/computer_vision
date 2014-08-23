@@ -17,10 +17,10 @@ void DebugSet::prepareDebug()
     trabalho_1->maxPoints = 4;
     MatrixXf pointList(trabalho_1->maxPoints, 2);
     pointList <<
-            20, 30,
-            0,  60,
-            50, 40,
-            30, 20;
+                 200,  52,
+                 213, 306,
+                 363, 232,
+                 362,  76;
     trabalho_1->points = pointList;
     //std::cout << pointList << std::endl;
     debugSetPack.push_back(trabalho_1);

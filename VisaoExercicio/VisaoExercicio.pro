@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     line.cpp \
     cvlib.cpp \
     imageviewer_ex2.cpp \
-    imageviewer_ex3.cpp
+    imageviewer_ex3.cpp \
+    object.cpp
 
 HEADERS  += mainwindow.h \
     imageviewer.h \
@@ -29,6 +30,7 @@ HEADERS  += mainwindow.h \
     line.h \
     cvlib.h \
     imageviewer_ex2.h \
-    imageviewer_ex3.h
+    imageviewer_ex3.h \
+    object.h
 
 FORMS    += mainwindow.ui

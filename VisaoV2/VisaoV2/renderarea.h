@@ -6,6 +6,17 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPaintEvent>
+#include <eigen3/Eigen/Dense>
+#include <stdio.h>
+#include <iostream>
+#include <QVector>
+
+using namespace Eigen;
+using namespace std;
+
+#define RENDER_POINTS   0
+#define RENDER_POLYGON  1
+#define RENDER_LINES    2
 
 class RenderArea : public QLabel
 {
@@ -15,6 +26,8 @@ public:
     void drawPin(float _x, float _y);
     void drawLine(float x1, float y1, float x2, float y2);
 
+    QVector <Vector3f> pinlist;
+    int renderType;
 signals:
     void imageClicked(QMouseEvent *ev);
 

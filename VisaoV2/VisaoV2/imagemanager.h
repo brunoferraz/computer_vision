@@ -14,7 +14,6 @@ public:
     explicit ImageManager(QWidget *parent = 0);
     QImage openImage(QString *path =0);
 signals:
-
 public slots:
 
 };

@@ -10,6 +10,7 @@
 #include <pinmanager.h>
 #include <QPaintEvent>
 #include <QPainter>
+#include <debugset.h>
 
 namespace Ui {
 class DisplayWindow;
@@ -25,13 +26,15 @@ public:
     void showImage(QImage img);
     void zoom(float factor);
     void updateWindow();
+    void debugSetup(DebugParameters *dp);
 
     float scale;
     QImage currentImage;
-    PinManager pinmanager;
+    PinManager *pinmanager;
 
 public slots:
     void windowClicked(QMouseEvent *ev);
+    //void on_get_all_pins();
 
 private:
     Ui::DisplayWindow *ui;
