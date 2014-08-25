@@ -48,40 +48,29 @@ MatrixXf CVlib::homography(MatrixXf v, Matrix3f h)
     return r;
 }
 
-QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<QPoint> *renderArea)
+QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *renderArea)
 {
     //TODO ImageSize must be calculated based on Bounds
-    //QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
-    QVector<QPoint> areaTemp;
+    QVector<Vector3f> areaTemp;
     if(renderArea==0){
-        areaTemp.push_back(QPoint(0,0));
-        areaTemp.push_back(QPoint(0,imageBase.height()));
-        areaTemp.push_back(QPoint(imageBase.width(),imageBase.height()));
-        areaTemp.push_back(QPoint(imageBase.width(),0));
+        areaTemp.push_back(Vector3f(0,0,1));
+        areaTemp.push_back(Vector3f(0,imageBase.height(),1));
+        areaTemp.push_back(Vector3f(imageBase.width(),imageBase.height(),1));
+        areaTemp.push_back(Vector3f(imageBase.width(),0,1));
     }else{
         areaTemp = *renderArea;
     }
-    QVector<Vector3f> area;
-    area.push_back(Vector3f(areaTemp.at(0).x(), areaTemp.at(0).y(), 1));
-    area.push_back(Vector3f(areaTemp.at(1).x(), areaTemp.at(1).y(), 1));
-    area.push_back(Vector3f(areaTemp.at(2).x(), areaTemp.at(2).y(), 1));
-    area.push_back(Vector3f(areaTemp.at(3).x(), areaTemp.at(3).y(), 1));
+    bounds limits = CVlib::getHomographyBounds(areaTemp, h);
 
-    bounds limits = CVlib::getHomographyBounds(area, h);
+   float ratio = limits.dx/limits.dy;
 
-    QVector<Vector3f> areaBack;
-    areaBack.push_back(Vector3f(limits.left, limits.top, 1));
-    areaBack.push_back(Vector3f(limits.left, limits.bottom, 1));
-    areaBack.push_back(Vector3f(limits.right, limits.bottom, 1));
-    areaBack.push_back(Vector3f(limits.right, limits.top, 1));
-
-    float ratio = limits.dx/limits.dy;
-
-    bounds limit_back = CVlib::getHomographyBounds(areaBack, h.inverse());
-    //QSize size = QSize(limit_back.dx, limit_back.dy);
-    QSize size = QSize(limit_back.dx, limit_back.dy);
+    QSize size = QSize(1000, 1000 * ratio);
     qDebug() << ratio;
     QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
+
+    //TODO testar imagem horizontal e vertical
+    //TODO implementar outros trabalhos
+    //Todo entrada de paramentro baseado no tamanho de saida da imagem
 
     float factor = 1;
     float stepX = limits.dx / size.width() / factor;

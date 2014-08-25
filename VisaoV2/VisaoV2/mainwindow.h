@@ -56,6 +56,7 @@ private slots:
     void on_pushButton_clicked();
     void on_bt_DebugMode_toggled(bool checked);
     void onGetAllPins();
+    void set_state(int w);
 
 private:
     Ui::MainWindow *ui;

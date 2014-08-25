@@ -21,6 +21,8 @@ public:
     void removePin(int index);
     void removeLastPin();
 
+    void removeAllPins();
+
     void addLine();
     void removeLine();
     void removeLastLine();

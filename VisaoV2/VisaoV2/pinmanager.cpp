@@ -1,4 +1,5 @@
 #include "pinmanager.h"
+#include <QDebug>
 
 PinManager::PinManager(QObject *parent) :
     QObject(parent)
@@ -20,6 +21,11 @@ void PinManager::removeLastPin()
         pinlist.removeLast();
     }
 }
+
+void PinManager::removeAllPins()
+{
+    pinlist.clear();
+}
 QVector <Vector3f> PinManager::getSortedPolygonPoints()
 {
     //sort points based on X
@@ -29,7 +35,7 @@ QVector <Vector3f> PinManager::getSortedPolygonPoints()
         vectemp << pinlist.at(i)(0), pinlist.at(i)(1), pinlist.at(i)(2);
         tempList.push_back(vectemp);
     }
-
+    qDebug() << "fsdffdsfdsfsd <<<"<<tempList.count();
     bool flag = true;
     while (flag)
     {

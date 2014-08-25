@@ -27,7 +27,7 @@ public:
 //    static bounds getImageResultBounds();
     static MatrixXf calculate_H(QVector <Vector3f> bp, QVector <Vector3f> rp);
     static MatrixXf homography(MatrixXf v,  Matrix3f h); //Receiver vector and transform Matrix
-    static QImage generateImage(QImage imageBase, Matrix3f h, QVector<QPoint> *renderArea = 0);
+    static QImage generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *renderArea = 0);
     static bounds getHomographyBounds(QVector<Vector3f> bp, Matrix3f H);
 };
 

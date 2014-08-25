@@ -3,6 +3,7 @@
 #include <debugset.h>
 #include <pinmanager.h>
 #include <cvlib.h>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -66,10 +67,52 @@ void MainWindow::adjust_work_0()
     Hi = H.inverse();
 
     //std::cout << H << std::endl;
-    //QVector<QPoint> *areaRender;
-    //*areaRender << QPoint(0,0) << QPoint(0, currentImage.height()) << QPoint(currentImage.width(), currentImage.height()) << QPoint(currentImage.width(), 0);
+    //QVector<Vector3f> *areaRender = &displayWindow.pinmanager->pinlist;
     QImage adjustedImage = CVlib::generateImage(currentImage, Hi);
     displayWindow.showImage(adjustedImage);
+    displayWindow.pinmanager->removeAllPins();
+    set_state(WORK_1);
+}
+
+void MainWindow::adjust_work_1()
+{
+    float h = 819;
+    float w = 613;
+    float sizeFactor = 1;
+    float divisor = h;
+    if(h>w){
+        divisor = w;
+    }
+    //chage size to ratio;
+    w = (w/divisor) * sizeFactor;
+    h = (h/divisor) * sizeFactor;
+
+    QVector<Vector3f> rlist; // Construct based on ratio
+    rlist.push_back(Vector3f(0, 0, 1));
+    rlist.push_back(Vector3f(0, h, 1));
+    rlist.push_back(Vector3f(w, h, 1));
+    rlist.push_back(Vector3f(w, 0, 1));
+    H = CVlib::calculate_H(rlist, displayWindow.pinmanager->pinlist);
+    Hi = H.inverse();
+    for(int i=0; i < displayWindow.pinmanager->pinlist.count(); i++){
+       displayWindow.pinmanager->pinlist.replace(i, displayWindow.pinmanager->pinlist.at(i)/ 1000);
+        std::cout << displayWindow.pinmanager->pinlist.at(i).transpose() << std::endl;
+    }
+    bounds limits = CVlib::getHomographyBounds(displayWindow.pinmanager->pinlist,H);
+    std::cout << limits.left << "   " << limits.top <<  "   "<<limits.right << "   " <<limits.bottom << std::endl;
+
+    QVector<Vector3f> area; // Construct based on ratio
+    area.push_back(Vector3f(limits.left, limits.top, 1));
+    area.push_back(Vector3f(limits.left, limits.bottom, 1));
+    area.push_back(Vector3f(limits.right, limits.bottom, 1));
+    area.push_back(Vector3f(limits.right, limits.top, 1));
+    displayWindow.pinmanager->pinlist = area;
+    displayWindow.pinmanager->pinlist = displayWindow.pinmanager->getSortedPolygonPoints();
+
+    QVector<Vector3f> *areaRender = &area;
+    QImage adjustedImage = CVlib::generateImage(currentImage, H, &displayWindow.pinmanager->pinlist);
+    displayWindow.showImage(adjustedImage);
+    displayWindow.pinmanager->removeAllPins();
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev)
@@ -102,8 +145,27 @@ void MainWindow::onGetAllPins()
         displayWindow.pinmanager->pinlist = displayWindow.pinmanager->getSortedPolygonPoints();
         adjust_work_0();
         break;
+    case WORK_1:
+        displayWindow.pinmanager->pinlist = displayWindow.pinmanager->getSortedPolygonPoints();
+        adjust_work_1();
+        break;
     default:
         break;
     }
 
+}
+
+void MainWindow::set_state(int w)
+{
+    STATE = w;
+    switch (w) {
+    case WORK_0:
+
+        break;
+    case WORK_1:
+
+        break;
+    default:
+        break;
+    }
 }
