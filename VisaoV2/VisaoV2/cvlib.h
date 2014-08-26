@@ -29,6 +29,7 @@ public:
     static MatrixXf homography(MatrixXf v,  Matrix3f h); //Receiver vector and transform Matrix
     static QImage generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *renderArea = 0);
     static bounds getHomographyBounds(QVector<Vector3f> bp, Matrix3f H);
+    static QVector<Vector3f> divideByW(QVector<Vector3f> list);
 };
 
 #endif // CVLIB_H

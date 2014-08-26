@@ -12,6 +12,7 @@ DisplayWindow::DisplayWindow(QWidget *parent) :
     RenderArea *area = ui->label;
     connect(area,SIGNAL(imageClicked(QMouseEvent*)),this,SLOT(windowClicked(QMouseEvent*)));
     pinmanager = new PinManager(this);
+    renderArea = ui->label;
 }
 
 DisplayWindow::~DisplayWindow()
@@ -23,8 +24,9 @@ void DisplayWindow::showImage(QImage img)
 {
     currentImage = img;
     scale = 1.0;
-    ui->label->resize(img.width(), img.height());
+    qDebug() << img.width();
     DisplayWindow::resize(img.width(), img.height());
+    ui->label->resize(img.width(), img.height());
     ui->label->setPixmap(QPixmap::fromImage(img));
 }
 
@@ -44,7 +46,6 @@ void DisplayWindow::updateWindow()
     RenderArea *area = ui->label;
     area->pinlist = pinmanager->pinlist;
     area->update();
-
 }
 
 void DisplayWindow::debugSetup(DebugParameters *dp)

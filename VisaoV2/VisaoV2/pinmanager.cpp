@@ -26,6 +26,14 @@ void PinManager::removeAllPins()
 {
     pinlist.clear();
 }
+
+void PinManager::printAllPins()
+{
+    qDebug() << pinlist.count();
+     for(int i = 0; i < pinlist.count(); i ++){
+         std::cout << pinlist.at(i).transpose() << std::endl;
+     }
+}
 QVector <Vector3f> PinManager::getSortedPolygonPoints()
 {
     //sort points based on X
@@ -35,7 +43,6 @@ QVector <Vector3f> PinManager::getSortedPolygonPoints()
         vectemp << pinlist.at(i)(0), pinlist.at(i)(1), pinlist.at(i)(2);
         tempList.push_back(vectemp);
     }
-    qDebug() << "fsdffdsfdsfsd <<<"<<tempList.count();
     bool flag = true;
     while (flag)
     {
@@ -75,4 +82,32 @@ QVector <Vector3f> PinManager::getSortedPolygonPoints()
     tempList.pop_front();
 
    return pinlist;
+}
+Vector3f PinManager::getHorizonLine(){
+    Vector3f horizonLine(3,1);
+    Vector3f vanishingPoint1(3,1);
+    Vector3f vanishingPoint2(3,1);
+    Vector3f projectiveLine_0;
+    Vector3f projectiveLine_1;
+
+    projectiveLine_0 = pinlist.at(0).cross(pinlist.at(1));
+    projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
+    projectiveLine_1 = pinlist.at(2).cross(pinlist.at(3));
+    projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
+
+    vanishingPoint1 = projectiveLine_0.cross(projectiveLine_1);
+    vanishingPoint1 = vanishingPoint1/vanishingPoint1(2);
+
+    projectiveLine_0 = pinlist.at(4).cross(pinlist.at(5));
+    projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
+    projectiveLine_1 = pinlist.at(6).cross(pinlist.at(7));
+    projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
+
+    vanishingPoint2 = projectiveLine_0.cross(projectiveLine_1);
+    vanishingPoint2 = vanishingPoint2/vanishingPoint2(2);
+
+    horizonLine = vanishingPoint1.cross(vanishingPoint2);
+    horizonLine = horizonLine/horizonLine(2);
+
+    return horizonLine;
 }

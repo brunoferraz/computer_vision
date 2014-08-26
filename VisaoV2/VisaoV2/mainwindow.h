@@ -14,6 +14,7 @@
 
 
 #define WORK_0  0
+#define WORK_0a 10
 #define WORK_1  1
 #define WORK_2  2
 #define WORK_3  3
@@ -39,10 +40,10 @@ public:
 
     void LoadImage();
     void adjust_work_0(); //projective to similarity 4 points
-    void adjust_work_1(); //interested area
-    void adjust_work_2(); //projective to affine 2 parallels
-    void adjust_work_3(); //affine to similarity 2 corners
-    void adjust_work_4(); //projective to similarity 5 corners
+    void adjust_work_0a(); //interested area
+    void adjust_work_1(); //projective to affine 2 parallels
+    void adjust_work_2(); //affine to similarity 2 corners
+    void adjust_work_3(); //projective to similarity 5 corners
 
     MatrixXf H;
     MatrixXf Hi;

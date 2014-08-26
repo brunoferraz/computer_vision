@@ -27,6 +27,10 @@ public:
     void removeLine();
     void removeLastLine();
 
+    Vector3f getHorizonLine();
+
+    void printAllPins();
+
     QVector <Vector3f> getSortedPolygonPoints();
     int maxPoints;
 signals:

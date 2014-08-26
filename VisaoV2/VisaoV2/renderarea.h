@@ -14,14 +14,15 @@
 using namespace Eigen;
 using namespace std;
 
-#define RENDER_POINTS   0
-#define RENDER_POLYGON  1
-#define RENDER_LINES    2
+
 
 class RenderArea : public QLabel
 {
     Q_OBJECT
 public:
+    static const int RENDER_POINTS = 0;
+    static const int RENDER_POLYGON = 1;
+    static const int RENDER_LINES = 2;
     explicit RenderArea(QWidget *parent = 0);
     void drawPin(float _x, float _y);
     void drawLine(float x1, float y1, float x2, float y2);

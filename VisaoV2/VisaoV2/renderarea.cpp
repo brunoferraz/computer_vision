@@ -32,7 +32,8 @@ void RenderArea::paintEvent(QPaintEvent *ev)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(Qt::red);
-    painter.setPen(Qt::red);
+    QPen pen(Qt::red, 2);
+    painter.setPen(pen);
     QPolygon poly;
     switch (renderType) {
     case RENDER_POINTS:

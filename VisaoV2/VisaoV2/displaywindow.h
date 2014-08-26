@@ -11,7 +11,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <debugset.h>
-
+#include <renderarea.h>
 namespace Ui {
 class DisplayWindow;
 }
@@ -27,6 +27,7 @@ public:
     void zoom(float factor);
     void updateWindow();
     void debugSetup(DebugParameters *dp);
+    RenderArea *renderArea;
 
     float scale;
     QImage currentImage;

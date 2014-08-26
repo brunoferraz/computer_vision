@@ -50,7 +50,6 @@ MatrixXf CVlib::homography(MatrixXf v, Matrix3f h)
 
 QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *renderArea)
 {
-    //TODO ImageSize must be calculated based on Bounds
     QVector<Vector3f> areaTemp;
     if(renderArea==0){
         areaTemp.push_back(Vector3f(0,0,1));
@@ -62,10 +61,16 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
     }
     bounds limits = CVlib::getHomographyBounds(areaTemp, h);
 
-   float ratio = limits.dx/limits.dy;
+   QSize size;
+   float ratio;
 
-    QSize size = QSize(1000, 1000 * ratio);
-    qDebug() << ratio;
+   if(limits.dx < limits.dy){
+       ratio = limits.dy/ limits.dx;
+       size = QSize(imageBase.width(), imageBase.width() * ratio);
+   }else{
+      ratio = limits.dx/ limits.dy;
+      size = QSize(imageBase.height() *ratio , imageBase.height());
+   }
     QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
 
     //TODO testar imagem horizontal e vertical
@@ -146,5 +151,13 @@ bounds CVlib::getHomographyBounds(QVector<Vector3f> bp, Matrix3f H)
     limits.dy = limits.bottom - limits.top;
 
     return limits;
+}
+
+QVector<Vector3f> CVlib::divideByW(QVector<Vector3f> list)
+{
+    for(int i = 0 ; i < list.count(); i++){
+        list.replace(i, list.at(i)/list.at(i)(2));
+    }
+    return list;
 }
 
