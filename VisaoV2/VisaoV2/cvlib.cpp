@@ -66,11 +66,12 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
 
    if(limits.dx < limits.dy){
        ratio = limits.dy/ limits.dx;
-       size = QSize(imageBase.width(), imageBase.width() * ratio);
+       size = QSize(imageBase.width(), imageBase.width() / ratio);
    }else{
       ratio = limits.dx/ limits.dy;
       size = QSize(imageBase.height() *ratio , imageBase.height());
    }
+   qDebug()<< ratio;
     QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
 
     //TODO testar imagem horizontal e vertical
