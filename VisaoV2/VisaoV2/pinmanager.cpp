@@ -111,3 +111,10 @@ Vector3f PinManager::getHorizonLine(){
 
     return horizonLine;
 }
+Vector3f PinManager::getLine(int i){
+    Vector3f projectiveLine;
+    int n = (i*2);
+    projectiveLine = pinlist.at(n).cross(pinlist.at(n+1));
+
+    return projectiveLine;
+}

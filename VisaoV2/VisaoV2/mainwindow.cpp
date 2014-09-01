@@ -39,6 +39,7 @@ void MainWindow::LoadImage()
     displayWindow.showImage(img);
     displayWindow.show();
     currentImage = img;
+    originalImage = img;
     if(isDebug){
         displayWindow.updateWindow();
     }
@@ -134,6 +135,127 @@ void MainWindow::adjust_work_1()
     QImage adjustedImage = CVlib::generateImage(currentImage, H);
     displayWindow.showImage(adjustedImage);
     displayWindow.pinmanager->removeAllPins();
+    currentImage = adjustedImage;
+    set_state(WORK_2);
+}
+
+void MainWindow::adjust_work_2()
+{
+    Vector3f l(3,1);
+    Vector3f m(3,1);
+    Vector3f r1(3,1);
+    Vector3f r2(3,1);
+    MatrixXf A(2,3);
+
+    l = displayWindow.pinmanager->getLine(0);
+    m = displayWindow.pinmanager->getLine(1);
+
+    r2 << l(0) * m(0), l(0) * m(1) + l(1) * m(0), l(1) * m(1);
+
+    l = displayWindow.pinmanager->getLine(2);
+    m = displayWindow.pinmanager->getLine(3);
+
+    r1 << l(0) * m(0), l(0) * m(1) + l(1) * m(0), l(1) * m(1);
+
+    A << r1.transpose(), r2.transpose();
+    JacobiSVD<MatrixXf> SVD(A, ComputeFullV);
+    VectorXf S = SVD.matrixV().col(SVD.matrixV().cols() - 1);
+
+    S(2) = 1;
+
+    MatrixXf kkt(2,2);
+    kkt << S(0), S(1), S(1), S(2);
+
+    LLT<MatrixXf> lltOfA(kkt);
+    MatrixXf L = lltOfA.matrixU();
+
+    H << L(0), L(1), 0, L(2), L(3), 0, 0, 0, 1;
+    H = H.inverse();
+
+    QImage adjustedImage = CVlib::generateImage(currentImage, H);
+    displayWindow.showImage(adjustedImage);
+    displayWindow.pinmanager->removeAllPins();
+}
+
+void MainWindow::adjust_work_3()
+{
+    int pairs = displayWindow.pinmanager->pinlist.count()/4;
+    std::cout << pairs << std::endl;
+    //SVD 5
+    MatrixXf A(pairs, 6);
+    for(int i = 0; i < pairs; i++){
+        int pos = i * 2;
+        Vector3f l(3,1);
+        Vector3f m(3,1);
+        MatrixXf r(1,6);
+        l = displayWindow.pinmanager->getLine(pos);
+        m = displayWindow.pinmanager->getLine(pos + 1);
+        l /=l(2);
+        m /=m(2);
+
+        r <<    l(0) * m(0),
+                (l(0) * m(1) + l(1) * m(0))/2,
+                l(1) * m(1),
+                (l(0) * m(2) + l(2) * m(0))/ 2,
+                (l(1)*m(2) + l(2)*m(1))/2,
+                l(2)*m(2);
+        A.row(i) << r;
+    }
+    JacobiSVD<MatrixXf> SVD(A, ComputeFullV);
+    VectorXf x = SVD.matrixV().col(SVD.matrixV().cols() - 1);
+    x/= x(2);
+
+    //QR DECOMPOSITION
+//    MatrixXf A(pairs, 5);
+//    VectorXf b(5,1);
+//    for(int i = 0; i < pairs; i++){
+//        int pos = i * 2;
+//        Vector3f l(3,1);
+//        Vector3f m(3,1);
+//        MatrixXf r(1,5);
+//        l = displayWindow.pinmanager->getLine(pos);
+//        m = displayWindow.pinmanager->getLine(pos + 1);
+
+//        r <<    l(0) * m(0),
+//                (l(0) * m(1) + l(1) * m(0))/2,
+//                l(1) * m(1),
+//                (l(0) * m(2) + l(2) * m(0))/ 2,
+//                (l(1)*m(2) + l(2)*m(1))/2;
+//        A.row(i) << r;
+//        b.row(i) << -l(2)*m(2);
+//    }
+//    MatrixXf x(5,1);
+//    x = A.colPivHouseholderQr().solve(b);
+//    x/=x(2);
+
+    //END OF DECOMPOSITION
+
+    Matrix3f C;
+    C << x(0), x(1)/2, x(3)/2,
+         x(1)/2, x(2), x(4)/2,
+         x(3)/2, x(4)/2, 1;
+
+    Matrix2f kkt;
+    kkt << C(0,0), C(0,1),
+           C(1,0), C(1,1);
+
+    MatrixXf vKKt(1,2);
+    vKKt << C(2,0), C(2,1);
+
+    MatrixXf V(1,2);
+    V = vKKt * kkt.inverse();
+
+    LLT<MatrixXf> llt(kkt);
+    MatrixXf L = llt.matrixU();
+    MatrixXf M (3,3);
+    M << L(0,0), L(0,1),0, L(1,0), L(1,1),0, V(0), V(1), 1;
+
+    H = M.inverse();
+    Hi = M;
+
+    QImage adjustedImage = CVlib::generateImage(currentImage, H);
+    displayWindow.showImage(adjustedImage);
+    displayWindow.pinmanager->removeAllPins();
 }
 
 void MainWindow::closeEvent(QCloseEvent *ev)
@@ -145,8 +267,8 @@ void MainWindow::closeEvent(QCloseEvent *ev)
 void MainWindow::setupProgram()
 {
     //STATE = WORK_1;
-    set_state(WORK_1);
-    isDebug = true;
+    set_state(WORK_3);
+    isDebug = false;
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -175,10 +297,16 @@ void MainWindow::onGetAllPins()
         //displayWindow.pinmanager->printAllPins();
         adjust_work_1();
         break;
+    case WORK_2:
+        //displayWindow.pinmanager->printAllPins();
+        adjust_work_2();
+        break;
+    case WORK_3:
+        displayWindow.pinmanager->printAllPins();
+        adjust_work_3();
     default:
         break;
     }
-
 }
 
 void MainWindow::set_state(int w)
@@ -191,7 +319,21 @@ void MainWindow::set_state(int w)
     case WORK_1:
         displayWindow.renderArea->renderType = RenderArea::RENDER_LINES;
         break;
+    case WORK_2:
+        if(isDebug){
+            //displayWindow.debugSetup(debugSet.debugSetPack.at(STATE));
+        }
+        break;
+    case WORK_3:
+        displayWindow.renderArea->renderType = RenderArea::RENDER_LINES;
+        break;
     default:
         break;
     }
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    displayWindow.showImage(originalImage);
+    displayWindow.pinmanager->removeAllPins();
 }

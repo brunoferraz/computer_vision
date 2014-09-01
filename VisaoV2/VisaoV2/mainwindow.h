@@ -49,7 +49,7 @@ public:
     MatrixXf Hi;
 
     QImage currentImage;
-
+    QImage originalImage;
 protected:
     void closeEvent(QCloseEvent *ev);
 
@@ -58,6 +58,8 @@ private slots:
     void on_bt_DebugMode_toggled(bool checked);
     void onGetAllPins();
     void set_state(int w);
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;

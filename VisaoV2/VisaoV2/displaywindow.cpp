@@ -24,7 +24,10 @@ void DisplayWindow::showImage(QImage img)
 {
     currentImage = img;
     scale = 1.0;
-    qDebug() << img.width();
+    //qDebug() << img.width();
+    DisplayWindow::resize(0, 0);
+    ui->label->resize(0, 0);
+
     DisplayWindow::resize(img.width(), img.height());
     ui->label->resize(img.width(), img.height());
     ui->label->setPixmap(QPixmap::fromImage(img));
@@ -33,11 +36,11 @@ void DisplayWindow::showImage(QImage img)
 void DisplayWindow::zoom(float factor)
 {
     scale = factor;
-    QPixmap map = QPixmap::fromImage(currentImage);
-    map = map.scaledToHeight(map.width() * factor);
-    DisplayWindow::resize(map.width(), map.height());
-    ui->label->resize(map.width(), map.height());
-    ui->label->setPixmap(map);
+//    QPixmap map = QPixmap::fromImage(currentImage);
+//    map = map.scaledToHeight(map.width() * factor);
+//    DisplayWindow::resize(map.width(), map.height());
+//    ui->label->resize(map.width(), map.height());
+//    ui->label->setPixmap(map);
 }
 
 void DisplayWindow::updateWindow()

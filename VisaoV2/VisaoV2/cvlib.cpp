@@ -65,13 +65,17 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
    float ratio;
 
    if(limits.dx < limits.dy){
+       qDebug() << "dx";
        ratio = limits.dy/ limits.dx;
-       size = QSize(imageBase.width(), imageBase.width() / ratio);
+       size = QSize(imageBase.width() * ratio, imageBase.width());
    }else{
+       qDebug() << "dy";
       ratio = limits.dx/ limits.dy;
-      size = QSize(imageBase.height() *ratio , imageBase.height());
+      size = QSize(imageBase.height()* ratio, imageBase.height());
+      //size = QSize(imageBase.width() * ratio, imageBase.width());
    }
-   qDebug()<< ratio;
+    //ratio = limits.dx/ limits.dy;
+    //size = QSize(300 * ratio, 300);
     QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
 
     //TODO testar imagem horizontal e vertical

@@ -28,6 +28,7 @@ public:
     void removeLastLine();
 
     Vector3f getHorizonLine();
+    Vector3f getLine(int i);
 
     void printAllPins();
 
