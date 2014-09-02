@@ -85,6 +85,33 @@ void DebugSet::prepareDebug()
                   246,  45,
                   253,  352;
     trabalho_3->points = pointList3;
-    //std::cout << pointList << std::endl;
-    debugSetPack.push_back(trabalho_3);
+    //debugSetPack.push_back(trabalho_3);
+
+    DebugParameters *trabalho_3m = new DebugParameters;
+    trabalho_3m->file = QString("/home/bruno/dev/computer_vision/VisaoV2/build-VisaoV2-Desktop-Debug/assets/piso-perspectiva_m.jpg");
+    trabalho_3m->maxPoints = 20;
+    MatrixXf pointList3m(trabalho_3m->maxPoints, 2);
+    pointList3m <<
+                   57.4758, 26.2311,
+                   300.487, 204.804,
+                   304.521, 29.2578,
+                   104.868, 200.769,
+                   559.633, 273.409,
+                   384.18,270.382,
+                   457.79, 320.827,
+                   495.099, 210.858,
+                   141.169, 314.773,
+                   165.369, 396.493,
+                   228.895, 362.191,
+                   81.6761, 358.156,
+                   450.731, 319.818,
+                   576.775, 413.644,
+                   586.858, 331.924,
+                   363.005, 426.76,
+                   124.027, 127.12,
+                   411.406, 131.156,
+                   303.513, 29.2578,
+                   297.462, 317.8;
+    trabalho_3m->points = pointList3m;
+    debugSetPack.push_back(trabalho_3m);
 }

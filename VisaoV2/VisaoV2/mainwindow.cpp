@@ -182,51 +182,51 @@ void MainWindow::adjust_work_3()
     int pairs = displayWindow.pinmanager->pinlist.count()/4;
     std::cout << pairs << std::endl;
     //SVD 5
-    MatrixXf A(pairs, 6);
-    for(int i = 0; i < pairs; i++){
-        int pos = i * 2;
-        Vector3f l(3,1);
-        Vector3f m(3,1);
-        MatrixXf r(1,6);
-        l = displayWindow.pinmanager->getLine(pos);
-        m = displayWindow.pinmanager->getLine(pos + 1);
-        l /=l(2);
-        m /=m(2);
-
-        r <<    l(0) * m(0),
-                (l(0) * m(1) + l(1) * m(0))/2,
-                l(1) * m(1),
-                (l(0) * m(2) + l(2) * m(0))/ 2,
-                (l(1)*m(2) + l(2)*m(1))/2,
-                l(2)*m(2);
-        A.row(i) << r;
-    }
-    JacobiSVD<MatrixXf> SVD(A, ComputeFullV);
-    VectorXf x = SVD.matrixV().col(SVD.matrixV().cols() - 1);
-    x/= x(2);
-
-    //QR DECOMPOSITION
-//    MatrixXf A(pairs, 5);
-//    VectorXf b(5,1);
+//    MatrixXf A(pairs, 6);
 //    for(int i = 0; i < pairs; i++){
 //        int pos = i * 2;
 //        Vector3f l(3,1);
 //        Vector3f m(3,1);
-//        MatrixXf r(1,5);
+//        MatrixXf r(1,6);
 //        l = displayWindow.pinmanager->getLine(pos);
 //        m = displayWindow.pinmanager->getLine(pos + 1);
+//        l /=l(2);
+//        m /=m(2);
 
 //        r <<    l(0) * m(0),
 //                (l(0) * m(1) + l(1) * m(0))/2,
 //                l(1) * m(1),
 //                (l(0) * m(2) + l(2) * m(0))/ 2,
-//                (l(1)*m(2) + l(2)*m(1))/2;
+//                (l(1)*m(2) + l(2)*m(1))/2,
+//                l(2)*m(2);
 //        A.row(i) << r;
-//        b.row(i) << -l(2)*m(2);
 //    }
-//    MatrixXf x(5,1);
-//    x = A.colPivHouseholderQr().solve(b);
-//    x/=x(2);
+//    JacobiSVD<MatrixXf> SVD(A, ComputeFullV);
+//    VectorXf x = SVD.matrixV().col(SVD.matrixV().cols() - 1);
+//    x/= x(2);
+
+    //QR DECOMPOSITION
+    MatrixXf A(pairs, 5);
+    VectorXf b(5,1);
+    for(int i = 0; i < pairs; i++){
+        int pos = i * 2;
+        Vector3f l(3,1);
+        Vector3f m(3,1);
+        MatrixXf r(1,5);
+        l = displayWindow.pinmanager->getLine(pos);
+        m = displayWindow.pinmanager->getLine(pos + 1);
+
+        r <<    l(0) * m(0),
+                (l(0) * m(1) + l(1) * m(0))/2,
+                l(1) * m(1),
+                (l(0) * m(2) + l(2) * m(0))/ 2,
+                (l(1)*m(2) + l(2)*m(1))/2;
+        A.row(i) << r;
+        b.row(i) << -l(2)*m(2);
+    }
+    MatrixXf x(5,1);
+    x = A.colPivHouseholderQr().solve(b);
+    x/=x(2);
 
     //END OF DECOMPOSITION
 
@@ -267,8 +267,8 @@ void MainWindow::closeEvent(QCloseEvent *ev)
 void MainWindow::setupProgram()
 {
     //STATE = WORK_1;
-    set_state(WORK_3);
-    isDebug = false;
+    set_state(WORK_1);
+    isDebug = true;
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -321,7 +321,7 @@ void MainWindow::set_state(int w)
         break;
     case WORK_2:
         if(isDebug){
-            //displayWindow.debugSetup(debugSet.debugSetPack.at(STATE));
+           displayWindow.debugSetup(debugSet.debugSetPack.at(STATE));
         }
         break;
     case WORK_3:
