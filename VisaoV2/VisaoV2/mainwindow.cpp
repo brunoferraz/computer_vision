@@ -123,14 +123,17 @@ void MainWindow::adjust_work_0a()
 void MainWindow::adjust_work_1()
 {
     //std::cout << displayWindow.pinmanager->getHorizonLine().transpose() << std::endl;
-    Vector3f hl(3,1);
+    Vector3f hl;
     hl = displayWindow.pinmanager->getHorizonLine().transpose();
 
-    MatrixXf temp(3,3);
+    Matrix3f temp;
     temp << 1, 0, 0, 0, 1, 0, hl(0), hl(1), hl(2);
 
     H = temp;
-    Hi = H.inverse();
+
+    std::cout << H << std::endl;
+
+    Hi = H.inverse().eval();
 
     QImage adjustedImage = CVlib::generateImage(currentImage, H);
     displayWindow.showImage(adjustedImage);
@@ -170,7 +173,7 @@ void MainWindow::adjust_work_2()
     MatrixXf L = lltOfA.matrixU();
 
     H << L(0), L(1), 0, L(2), L(3), 0, 0, 0, 1;
-    H = H.inverse();
+    H = H.inverse().eval();
 
     QImage adjustedImage = CVlib::generateImage(currentImage, H);
     displayWindow.showImage(adjustedImage);
@@ -268,7 +271,7 @@ void MainWindow::setupProgram()
 {
     //STATE = WORK_1;
     set_state(WORK_1);
-    isDebug = true;
+    isDebug = false;
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -320,8 +323,10 @@ void MainWindow::set_state(int w)
         displayWindow.renderArea->renderType = RenderArea::RENDER_LINES;
         break;
     case WORK_2:
+         displayWindow.renderArea->renderType = RenderArea::RENDER_LINES;
         if(isDebug){
-           displayWindow.debugSetup(debugSet.debugSetPack.at(STATE));
+          //LoadImage();
+          //displayWindow.debugSetup(debugSet.debugSetPack.at(STATE));
         }
         break;
     case WORK_3:
@@ -336,4 +341,9 @@ void MainWindow::on_pushButton_2_clicked()
 {
     displayWindow.showImage(originalImage);
     displayWindow.pinmanager->removeAllPins();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    displayWindow.currentImage.save("b.jpg");
 }

@@ -45,8 +45,8 @@ public:
     void adjust_work_2(); //affine to similarity 2 corners
     void adjust_work_3(); //projective to similarity 5 corners
 
-    MatrixXf H;
-    MatrixXf Hi;
+    Matrix3f H;
+    Matrix3f Hi;
 
     QImage currentImage;
     QImage originalImage;
@@ -60,6 +60,8 @@ private slots:
     void set_state(int w);
 
     void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::MainWindow *ui;

@@ -28,8 +28,8 @@ void DisplayWindow::showImage(QImage img)
     DisplayWindow::resize(0, 0);
     ui->label->resize(0, 0);
 
-    DisplayWindow::resize(img.width(), img.height());
-    ui->label->resize(img.width(), img.height());
+    ui->label->resize(50, 50);
+    //DisplayWindow::resize(img.width(), img.height());
     ui->label->setPixmap(QPixmap::fromImage(img));
 }
 

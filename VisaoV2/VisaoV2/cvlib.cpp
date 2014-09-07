@@ -63,15 +63,20 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
 
    QSize size;
    float ratio;
-
+   float tamanhoBase =500;
+//   if(imageBase.width()>imageBase.height()){
+//       tamanhoBase = imageBase.width();
+//   }else{
+//       tamanhoBase = imageBase.height();
+//   }
    if(limits.dx < limits.dy){
        qDebug() << "dx";
-       ratio = limits.dy/ limits.dx;
-       size = QSize(imageBase.width() * ratio, imageBase.width());
+       ratio = limits.dx/ limits.dy;
+       size = QSize(tamanhoBase* ratio, tamanhoBase);
    }else{
        qDebug() << "dy";
-      ratio = limits.dx/ limits.dy;
-      size = QSize(imageBase.height()* ratio, imageBase.height());
+      ratio = limits.dy/ limits.dx;
+      size = QSize(tamanhoBase , tamanhoBase*ratio);
       //size = QSize(imageBase.width() * ratio, imageBase.width());
    }
     //ratio = limits.dx/ limits.dy;
@@ -86,7 +91,7 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
     float stepX = limits.dx / size.width() / factor;
     float stepY = limits.dy / size.height() /factor;
 
-    Matrix3f hi = h.inverse();
+    Matrix3f hi = h.inverse().eval();
     for(int j = 0; j<imageResult.height(); j++){
         for(int i = 0; i<imageResult.width(); i++){
             MatrixXf p(3,1);

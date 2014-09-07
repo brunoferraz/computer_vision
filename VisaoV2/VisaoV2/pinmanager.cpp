@@ -84,37 +84,57 @@ QVector <Vector3f> PinManager::getSortedPolygonPoints()
    return pinlist;
 }
 Vector3f PinManager::getHorizonLine(){
-    Vector3f horizonLine(3,1);
-    Vector3f vanishingPoint1(3,1);
-    Vector3f vanishingPoint2(3,1);
+    Vector3f horizonLine;
+    Vector3f vanishingPoint1;
+    Vector3f vanishingPoint2;
     Vector3f projectiveLine_0;
     Vector3f projectiveLine_1;
 
-    projectiveLine_0 = pinlist.at(0).cross(pinlist.at(1));
-    projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
-    projectiveLine_1 = pinlist.at(2).cross(pinlist.at(3));
-    projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
+   // projectiveLine_0 = pinlist.at(0).cross(pinlist.at(1));
+   // projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
+   // projectiveLine_1 = pinlist.at(2).cross(pinlist.at(3));
+   // projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
 
+    //vanishingPoint1 = projectiveLine_0.cross(projectiveLine_1);
+   // vanishingPoint1 = vanishingPoint1/vanishingPoint1(2);
+
+    //projectiveLine_0 = pinlist.at(4).cross(pinlist.at(5));
+    //projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
+    //projectiveLine_1 = pinlist.at(6).cross(pinlist.at(7));
+   // projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
+
+    //vanishingPoint2 = projectiveLine_0.cross(projectiveLine_1);
+    //vanishingPoint2 = vanishingPoint2/vanishingPoint2(2);
+
+    //horizonLine = vanishingPoint1.cross(vanishingPoint2);
+    //horizonLine = horizonLine/horizonLine(2);
+
+    projectiveLine_0 = getLine(0);
+    projectiveLine_1 = getLine(1);
+    std::cout<< "projective_0  -" << projectiveLine_0.transpose() << std::endl;
+    std::cout<< "projective_1  -" << projectiveLine_1.transpose() << std::endl;
     vanishingPoint1 = projectiveLine_0.cross(projectiveLine_1);
-    vanishingPoint1 = vanishingPoint1/vanishingPoint1(2);
+    vanishingPoint1/=vanishingPoint1(2);
+    std::cout<< "vanishingPoint1  -" << vanishingPoint1.transpose() << std::endl;
 
-    projectiveLine_0 = pinlist.at(4).cross(pinlist.at(5));
-    projectiveLine_0 = projectiveLine_0/projectiveLine_0(2);
-    projectiveLine_1 = pinlist.at(6).cross(pinlist.at(7));
-    projectiveLine_1 = projectiveLine_1/projectiveLine_1(2);
-
+    projectiveLine_0 = getLine(2);
+    projectiveLine_1 = getLine(3);
+    std::cout<< "projective_2  -" << projectiveLine_0.transpose() << std::endl;
+    std::cout<< "projective_3  -" << projectiveLine_1.transpose() << std::endl;
     vanishingPoint2 = projectiveLine_0.cross(projectiveLine_1);
-    vanishingPoint2 = vanishingPoint2/vanishingPoint2(2);
+    vanishingPoint2/=vanishingPoint2(2);
+    std::cout<< "vanishingPoint2  -" << vanishingPoint2.transpose() << std::endl;
 
     horizonLine = vanishingPoint1.cross(vanishingPoint2);
     horizonLine = horizonLine/horizonLine(2);
 
+    std::cout<< "horizonLine  " << horizonLine.transpose() << std::endl;
     return horizonLine;
 }
 Vector3f PinManager::getLine(int i){
     Vector3f projectiveLine;
     int n = (i*2);
     projectiveLine = pinlist.at(n).cross(pinlist.at(n+1));
-
+    projectiveLine/= projectiveLine(2);
     return projectiveLine;
 }

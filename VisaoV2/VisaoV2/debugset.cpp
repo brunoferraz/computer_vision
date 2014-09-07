@@ -40,10 +40,27 @@ void DebugSet::prepareDebug()
                  429,   324;
     trabalho_2->points = pointList2;
     //std::cout << pointList << std::endl;
-    debugSetPack.push_back(trabalho_2);
+    //debugSetPack.push_back(trabalho_2);
+
+    DebugParameters *trabalho_novo = new DebugParameters;
+    trabalho_novo->file = QString("/home/bruno/dev/computer_vision/VisaoV2/build-VisaoV2-Desktop-Debug/assets/piso-perspectiva_m.jpg");
+    trabalho_novo->maxPoints = 8;
+    MatrixXf pointList_novo(trabalho_novo->maxPoints, 2);
+    pointList_novo << 
+                      307,  33,
+                      434,  157,
+                      157,  101,
+                      343,  236,
+                      460,  101,
+                      142,  318,
+                      429,  246,
+                      181,  384;
+    trabalho_novo->points = pointList_novo;
+    //std::cout << pointList << std::endl;
+    debugSetPack.push_back(trabalho_novo);
 
     DebugParameters *trabalho_2a = new DebugParameters;
-    trabalho_2a->file = QString("/home/bruno/dev/computer_vision/VisaoV2/build-VisaoV2-Desktop-Debug/assets/piso-perspectiva.jpg");
+    trabalho_2a->file = QString("/home/bruno/dev/computer_vision/VisaoV2/VisaoV2/assets/piso-afim-retas-paralelas.jpg");
     trabalho_2a->maxPoints = 8;
     MatrixXf pointList2a(trabalho_2a->maxPoints, 2);
     pointList2a <<
