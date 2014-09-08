@@ -168,21 +168,26 @@ bounds CVlib::getHomographyBounds(QVector<Vector3f> bp, Matrix3f H)
 
 bounds CVlib::getBounds(QVector<Vector3f> bp)
 {
+    CVlib::printQVector(bp);
     MatrixXf p(3,1);
     p << bp.at(0)(0), bp.at(0)(1), 1;
     MatrixXf itopLeft(3,1);
+    itopLeft = p;
     itopLeft = itopLeft/itopLeft(2);
 
     p << bp.at(3)(0), bp.at(3)(1),1;
     MatrixXf itopRight(3,1);
+    itopRight = p;
     itopRight = itopRight/itopRight(2);
 
     p << bp.at(1)(0), bp.at(1)(1),1;
     MatrixXf ibottomLeft(3,1);
+    ibottomLeft = p;
     ibottomLeft = ibottomLeft/ibottomLeft(2);
 
     p << bp.at(2)(0), bp.at(2)(1),1;
     MatrixXf ibottomRight(3,1);
+    ibottomRight = p;
     ibottomRight = ibottomRight/ibottomRight(2);
 
     QVector<Vector3f> listTemp;
@@ -192,6 +197,7 @@ bounds CVlib::getBounds(QVector<Vector3f> bp)
         temp << bp.at(i)(0), bp.at(i)(1), float(qSqrt(bp.at(i)(0)*bp.at(i)(0) + bp.at(i)(1)*bp.at(i)(1)));
         listTemp.push_back(temp);
     }
+   // CVlib::printQVector(listTemp);
     bool flag = true;
     while (flag) {
         flag = false;
@@ -227,5 +233,60 @@ QVector<Vector3f> CVlib::divideByW(QVector<Vector3f> list)
         list.replace(i, list.at(i)/list.at(i)(2));
     }
     return list;
+}
+
+Matrix3f CVlib::dlt(QVector<Vector3f> pointsA, QVector<Vector3f> pointsB)
+{
+    int numRows = pointsA.count() * 2;
+    MatrixXf A(numRows, 9);
+    for(int j = 0; j < pointsA.count();j++){
+        float x = pointsA.at(j)(0);
+        float y = pointsA.at(j)(1);
+        float w = pointsA.at(j)(2);
+        float x2 = pointsB.at(j)(0);
+        float y2 = pointsB.at(j)(1);
+        float w2 = pointsB.at(j)(2);
+        MatrixXf lineA(1,9);
+        MatrixXf lineB(1,9);
+
+        lineA<< 0,
+                0,
+                0,
+                -x,
+                -y,
+                -w,
+                y2 * x,
+                y2 * y,
+                y2 * w;
+
+        lineB << x,
+                 y,
+                 w,
+                0,
+                0,
+                0,
+                -x2 * x,
+                -x2 * y,
+                -x2 * w;
+
+        A.row(j * 2) << lineA;
+        A.row((j * 2) + 1) << lineB;
+    }
+    JacobiSVD<MatrixXf> SVD(A, ComputeFullU | ComputeFullV);
+    VectorXf h = SVD.matrixV().col(SVD.matrixV().cols() - 1);
+    Matrix3f H;
+    H <<    h(0), h(1), h(2),
+            h(3), h(4), h(5),
+            h(6), h(7), h(8);
+    //std::cout << H <<std::endl;
+    return H;
+}
+
+void CVlib::printQVector(QVector<Vector3f> list)
+{
+    for(int i = 0; i < list.count(); i ++)
+    {
+        std::cout << list.at(i).transpose() << std::endl;
+    }
 }
 

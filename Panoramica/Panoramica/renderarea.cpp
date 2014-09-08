@@ -16,6 +16,7 @@ void RenderArea::normalize()
         temp << pointListNormalized.at(i)(0)-limits.centroidX, pointListNormalized.at(i)(1)-limits.centroidY, pointListNormalized.at(i)(2);
         pointListNormalized.replace(i,temp);
     }
+    CVlib::printQVector(pointListNormalized);
     limits = CVlib::getBounds(pointList);
     for(int i =0; i< pointListNormalized.count();i++){
         Vector3f temp;
@@ -27,7 +28,6 @@ void RenderArea::normalize()
 QVector<Vector3f> RenderArea::getNormalizedPoints()
 {
     //Adjustments needed to get only good points
-
     return pointListNormalized;
 }
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
@@ -40,6 +40,7 @@ void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
         emit renderAreaClicked(ev);
     }
 }
+
 void RenderArea::paintEvent(QPaintEvent *ev){
     QLabel::paintEvent(ev);
     for(int i = 0; i < pointList.count(); i++){

@@ -46,54 +46,30 @@ void MainWindow::openFiles(QString *path)
            connect(tempArea,SIGNAL(renderAreaClicked(QMouseEvent*)),telaTemp,SLOT(getPointManual(QMouseEvent*)));
         }
      }
-
 }
 
 void MainWindow::adjustImage()
 {
     qDebug() << "ajustando Imagem";
     //Iterate each image and its next
+    Matrix3f H;
+    QImage result;
     for(int i = 0; i < list.count()-1; i++)
     {
-        int numRows = list_renderArea.at(i)->pointList.count() * 2;
-        MatrixXf A(numRows, 9);
-        QVector<Vector3f> O = list_renderArea.at(i)->getNormalizedPoints();
-        QVector<Vector3f> T = list_renderArea.at(i + 1)->getNormalizedPoints();
-        MatrixXf lineA(1,9);
-        MatrixXf lineB(1,9);
-        for(int j = 0; j < O.count();j++){
-            lineA << 0, 0, 0,
-                    -T.at(j)(2) * O.at(j)(0),
-                    -T.at(j)(2) * O.at(j)(1),
-                    -T.at(j)(2) * O.at(j)(2),
-                    T.at(j)(1) * O.at(j)(0),
-                    T.at(j)(1) * O.at(j)(1),
-                    T.at(j)(1) * O.at(j)(2);
-
-            lineB << T.at(j)(2) * O.at(j)(0),
-                    T.at(j)(2) * O.at(j)(1),
-                    T.at(j)(2) * O.at(j)(2),
-                    0,  0,  0,
-                    -T.at(j)(0) * O.at(j)(0),
-                    -T.at(j)(0) * O.at(j)(1),
-                    -T.at(j)(0) * O.at(j)(2);
-            A.row(i) << lineA;
-            A.row(i + 1) << lineB;
-        }
-        JacobiSVD<MatrixXf> SVD(A, ComputeFullU | ComputeFullV);
-        VectorXf S = SVD.matrixV().col(SVD.matrixV().cols() - 1);
-
-        Matrix3f H;
-        H <<    S(0), S(1), S(2),
-                S(3), S(4), S(5),
-                S(6), S(7), S(8);
-
-        std::cout << H << std::endl;
+        H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+        result = CVlib::generateImage(list.at(i+1),H);
+        //list_renderArea.at(i)->hide();
     }
+    RenderArea *resultArea = new RenderArea(this);
+    resultArea->move(10 , list.at(0).height()+40);
+    resultArea->resize(result.width(), result.height());
+    resultArea->show();
+    resultArea->setPixmap(QPixmap::fromImage(result));
 }
 
 void MainWindow::getPointManual(QMouseEvent *ev)
 {
+    //CVlib::printQVector(list_renderArea)
     counter++;
     qDebug() << ev->pos().x() << ev->pos().y();
     if(counter == 2){

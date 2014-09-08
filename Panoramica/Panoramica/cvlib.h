@@ -34,6 +34,8 @@ public:
     static bounds getHomographyBounds(QVector<Vector3f> bp, Matrix3f H);
     static bounds getBounds(QVector<Vector3f> bp);
     static QVector<Vector3f> divideByW(QVector<Vector3f> list);
+    static Matrix3f dlt(QVector<Vector3f> pointsA, QVector<Vector3f> pointsB);
+    static void printQVector(QVector<Vector3f> list);
 };
 
 #endif // CVLIB_H
