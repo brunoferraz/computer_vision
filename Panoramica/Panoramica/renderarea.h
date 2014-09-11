@@ -19,11 +19,13 @@ public:
     QVector<Vector3f> pointListNormalized;
     float pointSize;
     bounds limits;
+    Vector3f centroid;
+    Matrix3f H;
 
-
-    void getCentroid();
+    Vector3f getCentroid();
     void normalize();
     QVector<Vector3f> getNormalizedPoints();
+    void addPoint(float px, float py);
 
 signals:
     void renderAreaClicked(QMouseEvent *ev);

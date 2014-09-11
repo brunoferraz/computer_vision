@@ -9,6 +9,7 @@
 #include <QRgb>
 #include <math.h>
 #include <qmath.h>
+#include <QPointF>
 using namespace Eigen;
 using namespace std;
 CVlib::CVlib()
@@ -67,11 +68,6 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
    QSize size;
    float ratio;
    float tamanhoBase =500;
-//   if(imageBase.width()>imageBase.height()){
-//       tamanhoBase = imageBase.width();
-//   }else{
-//       tamanhoBase = imageBase.height();
-//   }
    if(limits.dx < limits.dy){
        qDebug() << "dx";
        ratio = limits.dx/ limits.dy;
@@ -80,10 +76,7 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
        qDebug() << "dy";
       ratio = limits.dy/ limits.dx;
       size = QSize(tamanhoBase , tamanhoBase*ratio);
-      //size = QSize(imageBase.width() * ratio, imageBase.width());
    }
-    //ratio = limits.dx/ limits.dy;
-    //size = QSize(300 * ratio, 300);
     QImage imageResult = QImage(size.width(), size.height(), QImage::Format_ARGB32);
 
     //TODO testar imagem horizontal e vertical
@@ -98,36 +91,53 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
     for(int j = 0; j<imageResult.height(); j++){
         for(int i = 0; i<imageResult.width(); i++){
             MatrixXf p(3,1);
-            p << (limits.left + stepX * i) , (limits.top + stepY * j), 1;
+            p << (limits.left + i * stepX) , (limits.top + j * stepY), 1;
             MatrixXf r(3,1);
-            r= CVlib::homography(p, hi);
-            QPoint p0(r(0),r(1));
-            QColor color(0, 0, 0);
-            MatrixXf finalColor(3,1);
-            finalColor << 0, 0, 0;
-            float ratio = 1;
-            if((p0.x() >=0 && p0.x() < imageBase.width())&&(p0.y()>=0 && p0.y()<imageBase.height())){
-                ratio = 0;
+            r = CVlib::homography(p, hi);
+            //std::cout << r.transpose() << std::endl;
+            QColor color(0, 0, 0, 0);
+            Vector4f finalColor;
+            finalColor << 0, 0, 0, 0;
+            if(r(0) >= 0 && r(0) < imageBase.width() && r(1) >= 0 && r(1) < imageBase.height()){
+                color.setAlpha(1);
+                color.setRgba(imageBase.pixel(r(0), r(1)));
                 for(int offSetY = -1; offSetY <= 1; offSetY++){
                     for(int offSetX = -1; offSetX <= 1; offSetX++){
-                        QPoint ptemp(p0.x() + offSetX, p0.y() + offSetY);
-                        float ratioX =  r(0)-ptemp.x();
-                        float ratioY =  r(1)-ptemp.y();
-                        float dist   = std::abs(1 - std::sqrt(std::pow(ratioX, 2) + std::pow(ratioY,2)));
-                        ratio += dist;
-                        if((ptemp.x() >=0 && ptemp.x() < imageBase.width())&&(ptemp.y()>=0 && ptemp.y()<imageBase.height())){
-                            QColor ctemp = imageBase.pixel(ptemp.x(), ptemp.y());
-                            MatrixXf cmTemp(3,1);
-                            cmTemp << ctemp.redF(), ctemp.greenF(), ctemp.blueF();
-                            finalColor += cmTemp * dist;
-                        }
+                        Vector3f pos;
+                        //pos << r(0)
                     }
                 }
+                imageResult.setPixel(i, j, color.rgba());
             }
-            finalColor = finalColor/ratio;
-            color.setRgb(finalColor(0) * 255, finalColor(1) * 255, finalColor(2) * 255);
-            imageResult.setPixel(QPoint(i, j), color.rgb());
+            //break;
+//            QPointF p0(r(0),r(1));
+//            QColor color(0, 0, 0);
+//            MatrixXf finalColor(3,1);
+//            finalColor << 0, 0, 0;
+//            float ratio = 1;
+//            if((p0.x() >=0 && p0.x() < imageBase.width())&&(p0.y()>=0 && p0.y()<imageBase.height())){
+//                ratio = 0;
+//                for(int offSetY = -1; offSetY <= 1; offSetY++){
+//                    for(int offSetX = -1; offSetX <= 1; offSetX++){
+//                        QPointF ptemp(p0.x() + offSetX, p0.y() + offSetY);
+//                        float ratioX =  r(0)-ptemp.x();
+//                        float ratioY =  r(1)-ptemp.y();
+//                        float dist   = std::abs(1 - std::sqrt(std::pow(ratioX, 2) + std::pow(ratioY,2)));
+//                        ratio += dist;
+//                        if((ptemp.x() >=0 && ptemp.x() < imageBase.width())&&(ptemp.y()>=0 && ptemp.y()<imageBase.height())){
+//                            QColor ctemp = imageBase.pixel(ptemp.x(), ptemp.y());
+//                            MatrixXf cmTemp(3,1);
+//                            cmTemp << ctemp.redF(), ctemp.greenF(), ctemp.blueF();
+//                            finalColor += cmTemp * dist;
+//                        }
+//                    }
+//                }
+//            }
+//            finalColor = finalColor/ratio;
+//            color.setRgb(finalColor(0) * 255, finalColor(1) * 255, finalColor(2) * 255);
+//            imageResult.setPixel(QPoint(i, j), color.rgb());
         }
+        //break;
      }
     return imageResult;
 }
@@ -168,7 +178,7 @@ bounds CVlib::getHomographyBounds(QVector<Vector3f> bp, Matrix3f H)
 
 bounds CVlib::getBounds(QVector<Vector3f> bp)
 {
-    CVlib::printQVector(bp);
+    //CVlib::printQVector(bp);
     MatrixXf p(3,1);
     p << bp.at(0)(0), bp.at(0)(1), 1;
     MatrixXf itopLeft(3,1);
@@ -227,7 +237,17 @@ bounds CVlib::getBounds(QVector<Vector3f> bp)
     return limits;
 }
 
-QVector<Vector3f> CVlib::divideByW(QVector<Vector3f> list)
+QVector<Vector3f> CVlib::pointlistHomography(QVector<Vector3f> list, Matrix3f h)
+{
+    for(int i = 0 ; i < list.count(); i++){
+        Vector3f vec;
+        vec = h * list.at(i);
+        list.replace(i, vec/ vec(2));
+    }
+    return list;
+}
+
+QVector<Vector3f> CVlib::listDivideByW(QVector<Vector3f> list)
 {
     for(int i = 0 ; i < list.count(); i++){
         list.replace(i, list.at(i)/list.at(i)(2));
@@ -245,7 +265,7 @@ Matrix3f CVlib::dlt(QVector<Vector3f> pointsA, QVector<Vector3f> pointsB)
         float w = pointsA.at(j)(2);
         float x2 = pointsB.at(j)(0);
         float y2 = pointsB.at(j)(1);
-        float w2 = pointsB.at(j)(2);
+        //float w2 = pointsB.at(j)(2);
         MatrixXf lineA(1,9);
         MatrixXf lineB(1,9);
 
@@ -278,8 +298,58 @@ Matrix3f CVlib::dlt(QVector<Vector3f> pointsA, QVector<Vector3f> pointsB)
     H <<    h(0), h(1), h(2),
             h(3), h(4), h(5),
             h(6), h(7), h(8);
-    //std::cout << H <<std::endl;
     return H;
+}
+
+QImage CVlib::mergeImages(QImage img1, QImage img2, QPointF *offSet_1, QPointF *offSet_2)
+{
+    if(offSet_2==0){
+        offSet_2 =new QPointF(0,0);
+    }
+    if(offSet_1==0){
+        offSet_1 =new QPointF(0,0);
+    }
+    float width     = offSet_1->x() - offSet_2->x() + img2.width();
+    float height    = offSet_2->y() - offSet_2->y() + img2.height();
+    QImage nova     = QImage(width, height, QImage::Format_ARGB32);
+//    for(int j = 0; j < img1.height(); j++){
+//        for(int i = 0; i < img1.width(); i++){
+//                float posX = i;
+//                float posY = j;
+//                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
+//                    nova.setPixel(posX, posY, img1.pixel(i,j));
+//                }
+//        }
+//    }
+    for(int j = 0; j < img2.height(); j++){
+        for(int i = 0; i < img2.width(); i++){
+                float posX = offSet_1->x() - offSet_2->x() + i;
+                float posY = offSet_1->y() - offSet_2->y() + j;
+                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
+                    nova.setPixel(posX, posY, img2.pixel(i,j));
+                }
+        }
+    }
+    return nova;
+}
+
+Vector3f CVlib::getCentroid(QVector<Vector3f> list)
+{
+    float left = list.at(0)(0);
+    float right = list.at(0)(0);
+    float top = list.at(0)(1);
+    float bottom = list.at(0)(1);
+    for(int i =0; i < list.count(); i++){
+        left    = std::min(left,    list.at(i)(0));
+        right   = std::max(right,   list.at(i)(0));
+        top     = std::min(top,     list.at(i)(1));
+        bottom  = std::max(bottom,  list.at(i)(1));
+    }
+    float dx = right-left;
+    float dy = bottom- top;
+    Vector3f centroid;
+    centroid <<  (dx/2) + left, (dy/2) + top, 1;
+    return centroid;
 }
 
 void CVlib::printQVector(QVector<Vector3f> list)

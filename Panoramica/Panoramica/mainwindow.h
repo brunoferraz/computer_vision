@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <eigen3/Eigen/Cholesky>
+#include <QPointF>
 
 using namespace Eigen;
 using namespace std;

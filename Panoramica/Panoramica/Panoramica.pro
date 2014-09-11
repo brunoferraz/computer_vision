@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderarea.cpp \
-    cvlib.cpp
+    cvlib.cpp \
+    debugset.cpp
 
 HEADERS  += mainwindow.h \
     renderarea.h \
-    cvlib.h
+    cvlib.h \
+    debugset.h
 
 FORMS    += mainwindow.ui
