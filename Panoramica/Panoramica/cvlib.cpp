@@ -99,47 +99,29 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
             Vector4f finalColor;
             finalColor << 0, 0, 0, 0;
             if(r(0) >= 0 && r(0) < imageBase.width() && r(1) >= 0 && r(1) < imageBase.height()){
-                color.setAlpha(1);
-                color.setRgba(imageBase.pixel(r(0), r(1)));
-                for(int offSetY = -1; offSetY <= 1; offSetY++){
-                    for(int offSetX = -1; offSetX <= 1; offSetX++){
-                        Vector3f pos;
-                        //pos << r(0)
-                    }
-                }
+                //color.setAlpha(1);
+                //color.setRgba(imageBase.pixel(r(0), r(1)));
+                color = CVlib::interpolate(imageBase, r);
                 imageResult.setPixel(i, j, color.rgba());
             }
-            //break;
-//            QPointF p0(r(0),r(1));
-//            QColor color(0, 0, 0);
-//            MatrixXf finalColor(3,1);
-//            finalColor << 0, 0, 0;
-//            float ratio = 1;
-//            if((p0.x() >=0 && p0.x() < imageBase.width())&&(p0.y()>=0 && p0.y()<imageBase.height())){
-//                ratio = 0;
-//                for(int offSetY = -1; offSetY <= 1; offSetY++){
-//                    for(int offSetX = -1; offSetX <= 1; offSetX++){
-//                        QPointF ptemp(p0.x() + offSetX, p0.y() + offSetY);
-//                        float ratioX =  r(0)-ptemp.x();
-//                        float ratioY =  r(1)-ptemp.y();
-//                        float dist   = std::abs(1 - std::sqrt(std::pow(ratioX, 2) + std::pow(ratioY,2)));
-//                        ratio += dist;
-//                        if((ptemp.x() >=0 && ptemp.x() < imageBase.width())&&(ptemp.y()>=0 && ptemp.y()<imageBase.height())){
-//                            QColor ctemp = imageBase.pixel(ptemp.x(), ptemp.y());
-//                            MatrixXf cmTemp(3,1);
-//                            cmTemp << ctemp.redF(), ctemp.greenF(), ctemp.blueF();
-//                            finalColor += cmTemp * dist;
-//                        }
-//                    }
-//                }
-//            }
-//            finalColor = finalColor/ratio;
-//            color.setRgb(finalColor(0) * 255, finalColor(1) * 255, finalColor(2) * 255);
-//            imageResult.setPixel(QPoint(i, j), color.rgb());
         }
-        //break;
      }
     return imageResult;
+}
+
+QColor CVlib::interpolate(QImage img, Vector3f point)
+{
+    QColor color(0, 0, 0, 0);
+    double pixX;
+    double pixY;
+    float fragX = std::abs(std::modf(point(0), &pixX));
+    float fragY = std::abs(std::modf(point(1), &pixY));
+
+    if(fragX == 0.5 && fragY == 0.5){
+        color.setRgba(img.pixel(point(0), point(1)));
+    }
+
+    return color;
 }
 
 bounds CVlib::getHomographyBounds(QVector<Vector3f> bp, Matrix3f H)

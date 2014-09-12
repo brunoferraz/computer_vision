@@ -8,6 +8,7 @@
 #include <QRect>
 #include <QSize>
 #include <QMatrix>
+#include <QColor>
 
 struct bounds{
     float top;
@@ -32,6 +33,7 @@ public:
     static MatrixXf calculate_H(QVector <Vector3f> bp, QVector <Vector3f> rp);
     static MatrixXf homography(MatrixXf v,  Matrix3f h); //Receiver vector and transform Matrix
     static QImage generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *renderArea = 0);
+    static QColor interpolate(QImage img, Vector3f point);
     static bounds getHomographyBounds(QVector<Vector3f> bp, Matrix3f H);
     static bounds getBounds(QVector<Vector3f> bp);
     static QVector<Vector3f> listDivideByW(QVector<Vector3f> list);
@@ -41,6 +43,7 @@ public:
     static QImage mergeImages(QImage img1, QImage img2, QPointF *offSet_1 = 0, QPointF *offSet_2 = 0);
     static Vector3f getCentroid(QVector<Vector3f> list);
     static void printQVector(QVector<Vector3f> list);
+
 };
 
 #endif // CVLIB_H
