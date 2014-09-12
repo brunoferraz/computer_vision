@@ -98,7 +98,7 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
             QColor color(0, 0, 0, 0);
             Vector4f finalColor;
             finalColor << 0, 0, 0, 0;
-            if(r(0) >= 0 && r(0) < imageBase.width() && r(1) >= 0 && r(1) < imageBase.height()){
+            if(r(0) > 0 && r(0) < imageBase.width() && r(1) > 0 && r(1) < imageBase.height()){
                 //color.setAlpha(1);
                 //color.setRgba(imageBase.pixel(r(0), r(1)));
                 color = CVlib::interpolate(imageBase, r);
@@ -116,11 +116,51 @@ QColor CVlib::interpolate(QImage img, Vector3f point)
     double pixY;
     float fragX = std::abs(std::modf(point(0), &pixX));
     float fragY = std::abs(std::modf(point(1), &pixY));
+    if((fragX == 0.5 && fragY == 0.5)||
+            (point(0)<1)||(point(0)>img.width()-2)||
+            (point(1)<1)||(point(1)>img.height()-2))
+    {
 
-    if(fragX == 0.5 && fragY == 0.5){
         color.setRgba(img.pixel(point(0), point(1)));
+        return color;
     }
-
+    if(fragX > 0.5){
+        if(fragY > 0.5){//9
+            color = CVlib::bilerp(
+                        img.pixel(pixX, pixY),
+                        img.pixel(pixX +1, pixY),
+                        img.pixel(pixX, pixY + 1),
+                        img.pixel(pixX +1, pixY +1),
+                        fragX +0.5,
+                        fragY +0.5);
+        }else if(fragY < 0.5){//3
+            color = CVlib::bilerp(
+                        img.pixel(pixX, pixY),
+                        img.pixel(pixX +1, pixY),
+                        img.pixel(pixX, pixY - 1),
+                        img.pixel(pixX +1, pixY -1),
+                        fragX +0.5,
+                        fragY -0.5);
+        }
+    }else if(fragX < 0.5){
+        if(fragY > 0.5){//7
+            color = CVlib::bilerp(
+                        img.pixel(pixX, pixY),
+                        img.pixel(pixX -1, pixY),
+                        img.pixel(pixX , pixY + 1),
+                        img.pixel(pixX -1, pixY +1),
+                        fragX -0.5,
+                        fragY +0.5);
+        }else if(fragY < 0.5){//1
+            color = CVlib::bilerp(
+                        img.pixel(pixX, pixY),
+                        img.pixel(pixX -1, pixY),
+                        img.pixel(pixX , pixY - 1),
+                        img.pixel(pixX -1, pixY -1),
+                        fragX -0.5,
+                        fragY -0.5);
+        }
+    }
     return color;
 }
 
@@ -294,17 +334,17 @@ QImage CVlib::mergeImages(QImage img1, QImage img2, QPointF *offSet_1, QPointF *
     float width     = offSet_1->x() - offSet_2->x() + img2.width();
     float height    = offSet_2->y() - offSet_2->y() + img2.height();
     QImage nova     = QImage(width, height, QImage::Format_ARGB32);
-//    for(int j = 0; j < img1.height(); j++){
-//        for(int i = 0; i < img1.width(); i++){
-//                float posX = i;
-//                float posY = j;
-//                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
-//                    nova.setPixel(posX, posY, img1.pixel(i,j));
-//                }
-//        }
-//    }
-    for(int j = 0; j < img2.height(); j++){
-        for(int i = 0; i < img2.width(); i++){
+    for(int j = 0; j < img1.height(); j++){
+        for(int i = 0; i < img1.width(); i++){
+                float posX = i;
+                float posY = j;
+                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
+                    nova.setPixel(posX, posY, img1.pixel(i,j));
+                }
+        }
+    }
+    for(int j = 1; j < img2.height(); j++){
+        for(int i = 1; i < img2.width(); i++){
                 float posX = offSet_1->x() - offSet_2->x() + i;
                 float posY = offSet_1->y() - offSet_2->y() + j;
                 if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
@@ -340,5 +380,35 @@ void CVlib::printQVector(QVector<Vector3f> list)
     {
         std::cout << list.at(i).transpose() << std::endl;
     }
+}
+
+QColor CVlib::vectorToColor(Vector4f color)
+{
+    QColor finalColor(color(0), color(1), color(2), color(3));
+    return finalColor;
+}
+
+Vector4f CVlib::colorToVector(QColor color)
+{
+    Vector4f finalColor;
+    finalColor << color.red(), color.green(), color.blue(), color.alpha();
+    return finalColor;
+}
+
+QColor CVlib::lerp(QColor v0, QColor v1, float t)
+{
+    Vector4f cv0 = CVlib::colorToVector(v0);
+    Vector4f cv1 = CVlib::colorToVector(v1);
+    Vector4f fColor = (1 - t)*cv0 + t * cv1;
+    QColor finalColor = CVlib::vectorToColor(fColor);
+    return finalColor;
+}
+
+QColor CVlib::bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float t1)
+{
+    QColor c1 = CVlib::lerp(v0, v1, t0);
+    QColor c2 = CVlib::lerp(v2, v3, t0);
+    QColor finalColor = CVlib::lerp(c1, c2, t1);
+    return finalColor;
 }
 

@@ -43,6 +43,11 @@ public:
     static QImage mergeImages(QImage img1, QImage img2, QPointF *offSet_1 = 0, QPointF *offSet_2 = 0);
     static Vector3f getCentroid(QVector<Vector3f> list);
     static void printQVector(QVector<Vector3f> list);
+    static QColor vectorToColor(Vector4f color);
+    static Vector4f colorToVector(QColor color);
+    static QColor lerp(QColor v0, QColor v1, float t);
+    static QColor bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float t1);
+
 
 };
 

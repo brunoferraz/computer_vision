@@ -71,9 +71,9 @@ void MainWindow::adjustImage()
    // resultArea->pointList = list_renderArea.at(0)->pointList;
     resultArea->move(10 , list.at(0).height() + 40);
     resultArea->resize(result.width(), result.height());
-    //QPointF *offSet_1 = new QPointF(list_renderArea.at(0)->centroid(0),list_renderArea.at(0)->centroid(1));
-    //QPointF *offSet_2 = new QPointF(centroid(0),centroid(1));
-    //result = CVlib::mergeImages(list.at(0),result, offSet_1, offSet_2);
+    QPointF *offSet_1 = new QPointF(list_renderArea.at(0)->centroid(0),list_renderArea.at(0)->centroid(1));
+    QPointF *offSet_2 = new QPointF(centroid(0),centroid(1));
+    result = CVlib::mergeImages(list.at(0),result, offSet_1, offSet_2);
     resultArea->setPixmap(QPixmap::fromImage(result));
     resultArea->show();
 }
