@@ -16,6 +16,7 @@
 #include <iostream>
 #include <eigen3/Eigen/Cholesky>
 #include <QPointF>
+#include <resultwindow.h>
 
 using namespace Eigen;
 using namespace std;
@@ -33,6 +34,7 @@ public:
     void openFiles(QString *path = 0);
     QVector<QImage> list;
     QVector<RenderArea *> list_renderArea;
+    ResultWindow resultWindow;
 
     static const bool isDebug = true;
     int counter;

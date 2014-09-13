@@ -19,10 +19,10 @@ Vector3f RenderArea::getCentroid()
 void RenderArea::normalize()
 {
     //pointListNormalized = pointList;
-    for(int i = 0; i < pointListNormalized.count(); i ++ ){
+    //for(int i = 0; i < pointListNormalized.count(); i ++ ){
         //std::cout << pointListNormalized.at(i) << std::endl;
         //pointListNormalized.push_back(pointList.at(i));
-    }
+    //}
 }
 
 QVector<Vector3f> RenderArea::getNormalizedPoints()

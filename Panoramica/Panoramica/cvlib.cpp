@@ -122,45 +122,15 @@ QColor CVlib::interpolate(QImage img, Vector3f point)
     {
 
         color.setRgba(img.pixel(point(0), point(1)));
+        color.setAlpha(0);
         return color;
     }
-    if(fragX > 0.5){
-        if(fragY > 0.5){//9
-            color = CVlib::bilerp(
-                        img.pixel(pixX, pixY),
-                        img.pixel(pixX +1, pixY),
-                        img.pixel(pixX, pixY + 1),
-                        img.pixel(pixX +1, pixY +1),
-                        fragX +0.5,
-                        fragY +0.5);
-        }else if(fragY < 0.5){//3
-            color = CVlib::bilerp(
-                        img.pixel(pixX, pixY),
-                        img.pixel(pixX +1, pixY),
-                        img.pixel(pixX, pixY - 1),
-                        img.pixel(pixX +1, pixY -1),
-                        fragX +0.5,
-                        fragY -0.5);
-        }
-    }else if(fragX < 0.5){
-        if(fragY > 0.5){//7
-            color = CVlib::bilerp(
-                        img.pixel(pixX, pixY),
-                        img.pixel(pixX -1, pixY),
-                        img.pixel(pixX , pixY + 1),
-                        img.pixel(pixX -1, pixY +1),
-                        fragX -0.5,
-                        fragY +0.5);
-        }else if(fragY < 0.5){//1
-            color = CVlib::bilerp(
-                        img.pixel(pixX, pixY),
-                        img.pixel(pixX -1, pixY),
-                        img.pixel(pixX , pixY - 1),
-                        img.pixel(pixX -1, pixY -1),
-                        fragX -0.5,
-                        fragY -0.5);
-        }
-    }
+    color = CVlib::bilerp(img.pixel(pixX -1, pixY),
+                          img.pixel(pixX +1, pixY),
+                          img.pixel(pixX, pixY + 1),
+                          img.pixel(pixX, pixY -1),
+                          fragX,
+                          fragY);
     return color;
 }
 
@@ -334,22 +304,24 @@ QImage CVlib::mergeImages(QImage img1, QImage img2, QPointF *offSet_1, QPointF *
     float width     = offSet_1->x() - offSet_2->x() + img2.width();
     float height    = offSet_2->y() - offSet_2->y() + img2.height();
     QImage nova     = QImage(width, height, QImage::Format_ARGB32);
-    for(int j = 0; j < img1.height(); j++){
-        for(int i = 0; i < img1.width(); i++){
-                float posX = i;
-                float posY = j;
-                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
-                    nova.setPixel(posX, posY, img1.pixel(i,j));
-                }
-        }
-    }
-    for(int j = 1; j < img2.height(); j++){
-        for(int i = 1; i < img2.width(); i++){
-                float posX = offSet_1->x() - offSet_2->x() + i;
-                float posY = offSet_1->y() - offSet_2->y() + j;
-                if(posX>=0 && posX<=nova.width() && posY >=0 && posY <nova.height()){
-                    nova.setPixel(posX, posY, img2.pixel(i,j));
-                }
+    QPoint p1;
+    QPoint p2;
+
+    for(int j = 0; j < nova.height(); j++)
+    {
+        for(int i = 0; i< nova.width(); i++)
+        {
+            p1 = QPoint(i, j);
+            p2 = QPoint(offSet_1->x() - offSet_2->x() + i,
+                        offSet_1->y() - offSet_2->y() + j);
+            if(i>0 && i<img2.width() && j>0 && j < img2.height()){
+                QColor color = img2.pixel(i,j);
+                nova.setPixel(p2.x() ,p2.y(), color.rgba());
+            }
+            if(i>0 && i<img1.width() && j>0 && j < img1.height()){
+                QColor color = img1.pixel(i,j);
+                nova.setPixel(i ,j, color.rgba());
+            }
         }
     }
     return nova;
@@ -384,7 +356,10 @@ void CVlib::printQVector(QVector<Vector3f> list)
 
 QColor CVlib::vectorToColor(Vector4f color)
 {
-    QColor finalColor(color(0), color(1), color(2), color(3));
+    QColor finalColor(color(0),
+                      color(1),
+                      color(2),
+                      color(3));
     return finalColor;
 }
 
@@ -400,6 +375,7 @@ QColor CVlib::lerp(QColor v0, QColor v1, float t)
     Vector4f cv0 = CVlib::colorToVector(v0);
     Vector4f cv1 = CVlib::colorToVector(v1);
     Vector4f fColor = (1 - t)*cv0 + t * cv1;
+    //Vector4f fColor = cv0 + t*(cv1 - cv0);
     QColor finalColor = CVlib::vectorToColor(fColor);
     return finalColor;
 }

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <debugset.h>
+#include <QDialog>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -37,8 +38,8 @@ void MainWindow::openFiles(QString *path)
         fileNames = dialog.selectedFiles();
         //qDebug() << fileNames;
     }else{
-        list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
-        list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
            QImage tempImg = list.at(i);
@@ -47,7 +48,7 @@ void MainWindow::openFiles(QString *path)
            tempArea->setPixmap(QPixmap::fromImage(tempImg));
            //Get debug Points from debug list
            tempArea->pointList = DebugSet::getDebugSet(i);
-           //qDebug() << tempArea->pointList.count();
+
            tempArea->update();
            list_renderArea.push_back(tempArea);
            connect(tempArea,SIGNAL(renderAreaClicked(QMouseEvent*)),telaTemp,SLOT(getPointManual(QMouseEvent*)));
@@ -66,21 +67,28 @@ void MainWindow::adjustImage()
         H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
         result = CVlib::generateImage(list.at(i+1),H);
     }
-    RenderArea *resultArea = new RenderArea(this);
-    Vector3f centroid = CVlib::getCentroid(CVlib::pointlistHomography(list_renderArea.at(1)->pointList, H));
-   // resultArea->pointList = list_renderArea.at(0)->pointList;
-    resultArea->move(10 , list.at(0).height() + 40);
-    resultArea->resize(result.width(), result.height());
-    QPointF *offSet_1 = new QPointF(list_renderArea.at(0)->centroid(0),list_renderArea.at(0)->centroid(1));
-    QPointF *offSet_2 = new QPointF(centroid(0),centroid(1));
-    result = CVlib::mergeImages(list.at(0),result, offSet_1, offSet_2);
-    resultArea->setPixmap(QPixmap::fromImage(result));
-    resultArea->show();
+
+//    RenderArea *resultArea = resultWindow.renderArea;
+//    Vector3f centroid = CVlib::getCentroid(CVlib::pointlistHomography(list_renderArea.at(1)->pointList, H.inverse()));
+//    resultArea->pointList = CVlib::pointlistHomography(list_renderArea.at(1)->pointList, H.inverse());
+//    std::cout << centroid << std::endl;
+//    //CVlib::printQVector(resultArea->pointList);
+//    //resultArea->move(10 , list.at(0).height() + 40);
+//    QPointF *offSet_1 = new QPointF(list_renderArea.at(0)->centroid(0),list_renderArea.at(0)->centroid(1));
+//    QPointF *offSet_2 = new QPointF(centroid(0),centroid(1));
+//    result = CVlib::mergeImages(list.at(0),result , offSet_1, offSet_2);
+//    resultArea->resize(result.width(), result.height());
+//    resultWindow.resize(result.width() + resultArea->x() + 10, result.height()+resultArea->y() +10);
+//    resultArea->setPixmap(QPixmap::fromImage(result));
+//    resultArea->show();
+//    resultWindow.exec();
+    RenderArea *resultArea = resultWindow.renderArea;
+    CVlib::printQVector(CVlib::pointlistHomography(list_renderArea.at(1)->pointList,H));
 }
 
 void MainWindow::getPointManual(QMouseEvent *ev)
 {
-    //CVlib::printQVector(list_renderArea)
+    //CVlib::printQVector(list_renderArea.at(counter)->pointList);
     counter++;
     if(isDebug){
         ev->x();

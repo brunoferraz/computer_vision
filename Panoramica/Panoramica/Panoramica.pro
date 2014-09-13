@@ -16,11 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     renderarea.cpp \
     cvlib.cpp \
-    debugset.cpp
+    debugset.cpp \
+    resultwindow.cpp
 
 HEADERS  += mainwindow.h \
     renderarea.h \
     cvlib.h \
-    debugset.h
+    debugset.h \
+    resultwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    resultwindow.ui
