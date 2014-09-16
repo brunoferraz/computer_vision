@@ -16,10 +16,10 @@
   <widget class="RenderArea" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>601</width>
-     <height>371</height>
+     <x>20</x>
+     <y>30</y>
+     <width>741</width>
+     <height>431</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -27,6 +27,19 @@
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>120</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background:rgb(0, 0, 0)</string>
    </property>
   </widget>
  </widget>

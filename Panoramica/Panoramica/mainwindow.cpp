@@ -62,11 +62,9 @@ void MainWindow::adjustImage()
     //Iterate each image and its next
     Matrix3f H;
     QImage result;
-    for(int i = 0; i < list.count()-1; i++)
-    {
-        H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
-        result = CVlib::generateImage(list.at(i+1),H);
-    }
+    int i = 0;
+    H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+    result = CVlib::generateImage(list.at(i+1),H);
 
 //    RenderArea *resultArea = resultWindow.renderArea;
 //    Vector3f centroid = CVlib::getCentroid(CVlib::pointlistHomography(list_renderArea.at(1)->pointList, H.inverse()));
@@ -82,8 +80,19 @@ void MainWindow::adjustImage()
 //    resultArea->setPixmap(QPixmap::fromImage(result));
 //    resultArea->show();
 //    resultWindow.exec();
+
     RenderArea *resultArea = resultWindow.renderArea;
-    CVlib::printQVector(CVlib::pointlistHomography(list_renderArea.at(1)->pointList,H));
+    Matrix3f identity;
+    identity <<
+            1,  0,  0,
+            0,  1,  0,
+            0,  0,  1;
+    Vector3f teste;
+    teste<< 0, 0,  1;
+    resultWindow.addImage(list.at(0), identity, teste, list_renderArea.at(0)->pointList);
+    resultWindow.addImage(list.at(1), H.inverse(), teste, list_renderArea.at(1)->pointList);
+    resultWindow.assembleImage();
+    resultWindow.exec();
 }
 
 void MainWindow::getPointManual(QMouseEvent *ev)

@@ -99,8 +99,6 @@ QImage CVlib::generateImage(QImage imageBase, Matrix3f h, QVector<Vector3f> *ren
             Vector4f finalColor;
             finalColor << 0, 0, 0, 0;
             if(r(0) > 0 && r(0) < imageBase.width() && r(1) > 0 && r(1) < imageBase.height()){
-                //color.setAlpha(1);
-                //color.setRgba(imageBase.pixel(r(0), r(1)));
                 color = CVlib::interpolate(imageBase, r);
                 imageResult.setPixel(i, j, color.rgba());
             }
@@ -234,7 +232,8 @@ QVector<Vector3f> CVlib::pointlistHomography(QVector<Vector3f> list, Matrix3f h)
     for(int i = 0 ; i < list.count(); i++){
         Vector3f vec;
         vec = h * list.at(i);
-        list.replace(i, vec/ vec(2));
+        vec /=vec(2);
+        list.replace(i, vec);
     }
     return list;
 }
@@ -284,7 +283,8 @@ Matrix3f CVlib::dlt(QVector<Vector3f> pointsA, QVector<Vector3f> pointsB)
         A.row(j * 2) << lineA;
         A.row((j * 2) + 1) << lineB;
     }
-    JacobiSVD<MatrixXf> SVD(A, ComputeFullU | ComputeFullV);
+    //JacobiSVD<MatrixXf> SVD(A, ComputeFullU | ComputeFullV);
+    JacobiSVD<MatrixXf> SVD(A, Eigen::ComputeThinV);
     VectorXf h = SVD.matrixV().col(SVD.matrixV().cols() - 1);
     Matrix3f H;
     H <<    h(0), h(1), h(2),

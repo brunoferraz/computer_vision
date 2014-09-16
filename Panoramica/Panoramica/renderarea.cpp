@@ -7,6 +7,7 @@ RenderArea::RenderArea(QWidget *parent) :
     QLabel(parent)
 {
     pointSize = 4;
+    setStyleSheet("background-color:transparent;");
 }
 
 Vector3f RenderArea::getCentroid()
@@ -39,6 +40,7 @@ void RenderArea::addPoint(float px, float py)
     RenderArea::getCentroid();
 
 }
+
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
     if(ev->button()==1){
         if(pointList.count()>=8){
