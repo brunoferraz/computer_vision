@@ -17,8 +17,8 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>741</width>
+     <y>28</y>
+     <width>739</width>
      <height>431</height>
     </rect>
    </property>
@@ -27,19 +27,6 @@
    </property>
    <property name="text">
     <string/>
-   </property>
-  </widget>
-  <widget class="QWidget" name="widget" native="true">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>120</width>
-     <height>80</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background:rgb(0, 0, 0)</string>
    </property>
   </widget>
  </widget>
