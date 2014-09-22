@@ -9,6 +9,9 @@
 #include <QSize>
 #include <QMatrix>
 #include <QColor>
+#include <QPixmap>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/types_c.h>
 
 struct bounds{
     float top;
@@ -24,6 +27,7 @@ struct bounds{
 
 using namespace Eigen;
 using namespace std;
+using namespace cv;
 
 class CVlib
 {
@@ -48,7 +52,9 @@ public:
     static QColor lerp(QColor v0, QColor v1, float t);
     static QColor bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float t1);
 
-
+    static QImage MatToQImage( const cv::Mat &inMat );
+    static cv::Mat QImageToCvMat(const QImage &inImage, bool inCloneImageData = true);
+    static Mat QPixmapToCvMat( const QPixmap &inPixmap, bool inCloneImageData = true );
 };
 
 #endif // CVLIB_H

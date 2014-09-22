@@ -8,6 +8,8 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <cvlib.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace Eigen;
 class RenderArea : public QLabel
@@ -26,6 +28,7 @@ public:
     void normalize();
     QVector<Vector3f> getNormalizedPoints();
     void addPoint(float px, float py);
+    void findPoints();
 
 signals:
     void renderAreaClicked(QMouseEvent *ev);

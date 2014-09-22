@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 
+using namespace cv;
 RenderArea::RenderArea(QWidget *parent) :
     QLabel(parent)
 {
@@ -39,6 +40,11 @@ void RenderArea::addPoint(float px, float py)
     pointList.push_back(point);
     RenderArea::getCentroid();
 
+}
+
+void RenderArea::findPoints()
+{
+    //Mat img = pixmap()->toImage();
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){

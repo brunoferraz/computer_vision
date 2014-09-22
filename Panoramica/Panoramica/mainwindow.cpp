@@ -47,8 +47,8 @@ void MainWindow::openFiles(QString *path)
            tempArea->move((tempImg.width()+ 10) * i + 10, 20);
            tempArea->setPixmap(QPixmap::fromImage(tempImg));
            //Get debug Points from debug list
-           tempArea->pointList = DebugSet::getDebugSet(i);
-
+           //tempArea->pointList = DebugSet::getDebugSet(i);
+           tempArea->findPoints();
            tempArea->update();
            list_renderArea.push_back(tempArea);
            connect(tempArea,SIGNAL(renderAreaClicked(QMouseEvent*)),telaTemp,SLOT(getPointManual(QMouseEvent*)));
