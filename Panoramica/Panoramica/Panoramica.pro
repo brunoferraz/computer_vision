@@ -28,3 +28,10 @@ FORMS    += mainwindow.ui \
     resultwindow.ui
 
 INCLUDEPATH += /include
+
+
+unix:!macx: LIBS += -lopencv_core
+unix:!macx: LIBS += -lopencv_imgproc
+unix:!macx: LIBS += -lopencv_features2d
+unix:!macx: LIBS += -lopencv_nonfree
+

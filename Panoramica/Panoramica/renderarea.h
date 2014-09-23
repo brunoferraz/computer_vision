@@ -17,6 +17,7 @@
 
 using namespace Eigen;
 using namespace cv;
+using namespace std;
 class RenderArea : public QLabel
 {
     Q_OBJECT
@@ -28,6 +29,7 @@ public:
     bounds limits;
     Vector3f centroid;
     Matrix3f H;
+    Mat descriptors;
 
     Vector3f getCentroid();
     void normalize();

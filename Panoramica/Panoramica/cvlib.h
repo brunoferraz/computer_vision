@@ -18,6 +18,8 @@
 #include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/imgproc.hpp>
 
 struct bounds{
     float top;
@@ -58,8 +60,12 @@ public:
     static QColor lerp(QColor v0, QColor v1, float t);
     static QColor bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float t1);
 
-    static QImage Mat2QImage(cv::Mat const& src);
-    static cv::Mat QImage2Mat(QImage const& src);
+    static QImage Mat2QImage(const cv::Mat &inMat );
+    static cv::Mat QImage2Mat(const QImage &inImage, bool inCloneImageData = true );
+    static QPixmap Mat2QPixmap( const cv::Mat &inMat );
+
+
+    static const int maxPoints = 100;
 };
 
 #endif // CVLIB_H

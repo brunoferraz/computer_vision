@@ -3,7 +3,6 @@
 #include <iostream>
 #include <stdio.h>
 
-using namespace cv;
 RenderArea::RenderArea(QWidget *parent) :
     QLabel(parent)
 {
@@ -44,11 +43,13 @@ void RenderArea::addPoint(float px, float py)
 
 void RenderArea::findPoints()
 {
-    //Mat img = pixmap()->toImage();
-   //CVlib::QImageToCvMat(RenderArea::pixmap()->toImage());
-    //Mat img();
-    //QImage depthImg = pixmap()->toImage();
-    //cv::imshow( "Display window", depthMat );
+    SurfFeatureDetector detector( 1 );
+    std::vector<KeyPoint> keypoints_1;
+    Mat img = CVlib::QImage2Mat(pixmap()->toImage());
+    detector.detect( img, keypoints_1 );
+
+    SurfDescriptorExtractor extractor;
+    extractor.compute( img, keypoints_1, descriptors);
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){

@@ -17,7 +17,6 @@ CVlib::CVlib()
 {
 
 }
-
 MatrixXf CVlib::calculate_H(QVector <Vector3f> bp, QVector <Vector3f> rp)
 {
     //CREATE MATRIX
@@ -43,7 +42,6 @@ MatrixXf CVlib::calculate_H(QVector <Vector3f> bp, QVector <Vector3f> rp)
 
     return h;
 }
-
 
 MatrixXf CVlib::homography(MatrixXf v, Matrix3f h)
 {
@@ -389,22 +387,81 @@ QColor CVlib::bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float
     return finalColor;
 }
 
-QImage CVlib::Mat2QImage(const Mat &src)
+QImage CVlib::Mat2QImage(const Mat &inMat)
 {
-    cv::Mat temp; // make the same cv::Mat
-    cv::cvtColor(src, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
-    QImage dest((const uchar *) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
-    dest.bits(); // enforce deep copy, see documentation
-     //of QImage::QImage ( const uchar * data, int width, int height, Format format )
 
-    return dest;
+    switch ( inMat.type() )
+    {
+     // 8-bit, 4 channel
+     case CV_8UC4:
+     {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB32 );
+        return image;
+     }
+
+     // 8-bit, 3 channel
+     case CV_8UC3:
+     {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
+        return image.rgbSwapped();
+     }
+
+     // 8-bit, 1 channel
+     case CV_8UC1:
+     {
+        static QVector<QRgb>  sColorTable;
+        // only create our color table once
+        if ( sColorTable.isEmpty() )
+        {
+           for ( int i = 0; i < 256; ++i )
+              sColorTable.push_back( qRgb( i, i, i ) );
+        }
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_Indexed8 );
+        image.setColorTable( sColorTable );
+        return image;
+     }
+
+     default:
+        qWarning() << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type();
+        break;
+    }
+    return QImage();
 }
 
-Mat CVlib::QImage2Mat(const QImage &src)
+Mat CVlib::QImage2Mat(const QImage &inImage, bool inCloneImageData)
 {
-//    cv::Mat tmp(src.height(),src.width(),CV_8UC3,(uchar*)src.bits(),src.bytesPerLine());
-//    cv::Mat result; // deep copy just in case (my lack of knowledge with open cv)
-    //cv::cvtColor(tmp, result,CV_BGR2RGB);
-//    return result;
+    switch ( inImage.format() )
+    {
+       // 8-bit, 4 channel
+       case QImage::Format_RGB32:
+       {
+          cv::Mat  mat( inImage.height(), inImage.width(), CV_8UC4, const_cast<uchar*>(inImage.bits()), inImage.bytesPerLine() );
+          return (inCloneImageData ? mat.clone() : mat);
+       }
+       // 8-bit, 3 channel
+       case QImage::Format_RGB888:
+       {
+          if ( !inCloneImageData )
+             qWarning() << "ASM::QImageToCvMat() - Conversion requires cloning since we use a temporary QImage";
+
+          QImage   swapped = inImage.rgbSwapped();
+          return cv::Mat( swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar*>(swapped.bits()), swapped.bytesPerLine() ).clone();
+       }
+       // 8-bit, 1 channel
+       case QImage::Format_Indexed8:
+       {
+          cv::Mat  mat( inImage.height(), inImage.width(), CV_8UC1, const_cast<uchar*>(inImage.bits()), inImage.bytesPerLine() );
+          return (inCloneImageData ? mat.clone() : mat);
+       }
+       default:
+          qWarning() << "ASM::QImageToCvMat() - QImage format not handled in switch:" << inImage.format();
+          break;
+    }
+    return cv::Mat();
 }
 
+QPixmap CVlib::Mat2QPixmap(const Mat &inMat)
+{
+    QPixmap pix = QPixmap::fromImage(CVlib::Mat2QImage(inMat));
+    return pix;
+}
