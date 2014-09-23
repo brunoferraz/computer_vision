@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Panoramica
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderarea.cpp \
@@ -27,3 +26,5 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     resultwindow.ui
+
+INCLUDEPATH += /include

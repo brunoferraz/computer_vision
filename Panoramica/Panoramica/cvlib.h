@@ -10,6 +10,12 @@
 #include <QMatrix>
 #include <QColor>
 #include <QPixmap>
+#include <stdio.h>
+#include <iostream>
+#include "opencv2/core/core.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 
@@ -52,9 +58,8 @@ public:
     static QColor lerp(QColor v0, QColor v1, float t);
     static QColor bilerp(QColor v0, QColor v1, QColor v2, QColor v3, float t0, float t1);
 
-    static QImage MatToQImage( const cv::Mat &inMat );
-    static cv::Mat QImageToCvMat(const QImage &inImage, bool inCloneImageData = true);
-    static Mat QPixmapToCvMat( const QPixmap &inPixmap, bool inCloneImageData = true );
+    static QImage Mat2QImage(cv::Mat const& src);
+    static cv::Mat QImage2Mat(QImage const& src);
 };
 
 #endif // CVLIB_H

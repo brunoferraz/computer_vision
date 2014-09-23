@@ -45,6 +45,10 @@ void RenderArea::addPoint(float px, float py)
 void RenderArea::findPoints()
 {
     //Mat img = pixmap()->toImage();
+   //CVlib::QImageToCvMat(RenderArea::pixmap()->toImage());
+    //Mat img();
+    //QImage depthImg = pixmap()->toImage();
+    //cv::imshow( "Display window", depthMat );
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
