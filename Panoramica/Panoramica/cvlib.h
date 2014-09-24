@@ -65,7 +65,7 @@ public:
     static QPixmap Mat2QPixmap( const cv::Mat &inMat );
 
 
-    static const int maxPoints = 100;
+    static const int siftParameter = 10;
 };
 
 #endif // CVLIB_H

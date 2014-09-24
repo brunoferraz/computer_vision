@@ -23,9 +23,13 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/nonfree/features2d.hpp"
+#include <opencv2/flann/flann.hpp>
+#include <opencv2/flann.hpp>
+
 
 using namespace Eigen;
 using namespace std;
+using namespace cv;
 namespace Ui {
 class MainWindow;
 }

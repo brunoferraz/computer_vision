@@ -30,6 +30,7 @@ public:
     Vector3f centroid;
     Matrix3f H;
     Mat descriptors;
+    std::vector<KeyPoint> keypoints;
 
     Vector3f getCentroid();
     void normalize();

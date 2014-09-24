@@ -43,13 +43,13 @@ void RenderArea::addPoint(float px, float py)
 
 void RenderArea::findPoints()
 {
-    SurfFeatureDetector detector( 1 );
-    std::vector<KeyPoint> keypoints_1;
-    Mat img = CVlib::QImage2Mat(pixmap()->toImage());
-    detector.detect( img, keypoints_1 );
+    SiftFeatureDetector detector( CVlib::siftParameter );
 
-    SurfDescriptorExtractor extractor;
-    extractor.compute( img, keypoints_1, descriptors);
+    Mat img = CVlib::QImage2Mat(pixmap()->toImage());
+    detector.detect( img, keypoints );
+
+    SiftDescriptorExtractor extractor;
+    extractor.compute( img, keypoints, descriptors);
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
