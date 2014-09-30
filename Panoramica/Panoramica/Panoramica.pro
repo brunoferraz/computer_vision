@@ -29,6 +29,7 @@ FORMS    += mainwindow.ui \
 
 INCLUDEPATH += /include
 
+QMAKE_CXXFLAGS += -std=c++11
 
 unix:!macx: LIBS += -lopencv_core
 unix:!macx: LIBS += -lopencv_imgproc

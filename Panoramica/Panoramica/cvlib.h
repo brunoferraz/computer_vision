@@ -21,6 +21,7 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #include <opencv2/imgproc.hpp>
 
+
 struct bounds{
     float top;
     float left;
@@ -54,7 +55,10 @@ public:
     static QMatrix convertToQMatrix(Matrix3f m);
     static QImage mergeImages(QImage img1, QImage img2, QPointF *offSet_1 = 0, QPointF *offSet_2 = 0);
     static Vector3f getCentroid(QVector<Vector3f> list);
+
     static void printQVector(QVector<Vector3f> list);
+    static void printArray(int l[]);
+
     static QColor vectorToColor(Vector4f color);
     static Vector4f colorToVector(QColor color);
     static QColor lerp(QColor v0, QColor v1, float t);
@@ -64,8 +68,12 @@ public:
     static cv::Mat QImage2Mat(const QImage &inImage, bool inCloneImageData = true );
     static QPixmap Mat2QPixmap( const cv::Mat &inMat );
 
+    static Matrix3f ransac(QVector<Vector3f> pA, QVector<Vector3f> pB);
+    static float getDistance(Vector3f va, Vector3f vb);
 
-    static const int siftParameter = 10;
+
+    static const int siftParameter = 100;
+    static float ransacThreshold;
 };
 
 #endif // CVLIB_H

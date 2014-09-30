@@ -92,7 +92,7 @@ void MainWindow::openFiles(QString *path)
                 Vector3f temp2;
                 temp2 << x, y, 1;
                 listaTemp_1.push_back(temp2);
-                printf( "-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  \n", i, good_matches[i].queryIdx, good_matches[i].trainIdx );
+                //printf( "-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  \n", i, good_matches[i].queryIdx, good_matches[i].trainIdx );
             }
             list_renderArea.at(j-1)->pointList = listaTemp_0;
             list_renderArea.at(j)->pointList = listaTemp_1;
@@ -109,7 +109,8 @@ void MainWindow::adjustImage()
     Matrix3f H;
     QImage result;
     int i = 0;
-    H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+    //H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+    H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
     result = CVlib::generateImage(list.at(i+1),H);
 
 
@@ -133,6 +134,6 @@ void MainWindow::getPointManual(QMouseEvent *ev)
     counter++;
     if(isDebug){
         //ev->x();
-        //adjustImage();
+        adjustImage();
     }
 }

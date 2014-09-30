@@ -353,6 +353,13 @@ void CVlib::printQVector(QVector<Vector3f> list)
     }
 }
 
+void CVlib::printArray(int l[])
+{
+//    for(int i = 0; i < l.size(); i++){
+//        std::cout << l[i] << std::endl;
+//    }
+}
+
 QColor CVlib::vectorToColor(Vector4f color)
 {
     QColor finalColor(color(0),
@@ -465,3 +472,85 @@ QPixmap CVlib::Mat2QPixmap(const Mat &inMat)
     QPixmap pix = QPixmap::fromImage(CVlib::Mat2QImage(inMat));
     return pix;
 }
+
+Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
+{
+    int pairs = std::min(pA.count(), pB.count());
+    int maxCounter = 0;
+    QVector<int> listTemp;
+    for(int i = 0 ; i < pairs; i++){
+       listTemp.push_back(i);
+    }
+//    QVector<int> listFinal;
+//    while (listTemp.count()) {
+//        int sort = std::round(((double) rand() / (RAND_MAX)) * listTemp.count()-1);
+//        if(sort >= 0){
+//            listFinal.push_back(listTemp.at(sort));
+//            listTemp.removeAt(sort);
+//        }
+//    }
+//    Matrix3f Hfinal;
+//    for(int j = 0; j < listFinal.count() - 4 ;j ++){
+//        QVector<Vector3f> pA2;
+//        QVector<Vector3f> pB2;
+//        for(int i = 0; i < 4; i++)
+//        {
+//            pA2.push_back(pA.at(listFinal.at(i)));
+//            pB2.push_back(pB.at(listFinal.at(i)));
+//        }
+//        //generate h based on 4 random points
+//        Matrix3f Htemp;
+//        Htemp = dlt(pA2, pB2);
+//        int counter = 0;
+//        //multiply all point by h and get distance from the expected position
+//        for(int i = 0 ; i < pA2.count(); i ++)
+//        {
+//            Vector3f ptemp;
+//            ptemp = Htemp * pA2.at(i);
+//            ptemp /= ptemp(2);
+//            float distance = getDistance(pB2.at(i), ptemp);
+//            if(distance < 0.5)
+//            {
+//                counter++;
+//            }
+//        }
+//        if(counter >= maxCounter){
+//            maxCounter = counter;
+//            Hfinal = Htemp;
+//        }
+//    }
+    Matrix3f Hfinal;
+    for(int j = 0; j < 1000; j++){
+        QVector<int> listFinal;
+        QVector<int> lTemp = listTemp;
+        for(int i = 0 ; i < 4; i++){
+            bool needSort = true;
+            while (needSort) {
+                int sort = std::round(((double) rand() / (RAND_MAX)) * lTemp.count()-1);
+                if(sort >= 0){
+                    for(int k =0; k<listFinal.count(); k++){
+                        if(sort != lTemp.at(k)){
+                            listFinal.push_back(lTemp.at(sort));
+                            lTemp.removeAt(sort);
+                            needSort = false;
+                        }else{
+                            needSort = true;
+                        }
+                    }
+                }
+            }
+        }
+        qDebug() << listFinal.count();
+    }
+    return Hfinal;
+}
+
+float CVlib::getDistance(Vector3f va, Vector3f vb)
+{
+    Vector3f vf;
+    vf = vb - va;
+    float distance = (vf(0)* vf(0) ) + (vf(1) * vf(1));
+    return distance;
+}
+
+float CVlib::ransacThreshold = 0.5;
