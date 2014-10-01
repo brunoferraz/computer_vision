@@ -520,28 +520,18 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
 //        }
 //    }
     Matrix3f Hfinal;
-    for(int j = 0; j < 1000; j++){
-        QVector<int> listFinal;
-        QVector<int> lTemp = listTemp;
-        for(int i = 0 ; i < 4; i++){
-            bool needSort = true;
-            while (needSort) {
-                int sort = std::round(((double) rand() / (RAND_MAX)) * lTemp.count()-1);
-                if(sort >= 0){
-                    for(int k =0; k<listFinal.count(); k++){
-                        if(sort != lTemp.at(k)){
-                            listFinal.push_back(lTemp.at(sort));
-                            lTemp.removeAt(sort);
-                            needSort = false;
-                        }else{
-                            needSort = true;
-                        }
-                    }
-                }
+    for(int i = 0; i < listTemp.count(); i ++)
+    {
+        for(int j = 0; j < listTemp.count(); j ++)
+        {
+            for(int k = 0; k < listTemp.count(); k ++)
+            {
+
             }
+
         }
-        qDebug() << listFinal.count();
     }
+
     return Hfinal;
 }
 
