@@ -481,14 +481,7 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
     for(int i = 0 ; i < pairs; i++){
        listTemp.push_back(i);
     }
-//    QVector<int> listFinal;
-//    while (listTemp.count()) {
-//        int sort = std::round(((double) rand() / (RAND_MAX)) * listTemp.count()-1);
-//        if(sort >= 0){
-//            listFinal.push_back(listTemp.at(sort));
-//            listTemp.removeAt(sort);
-//        }
-//    }
+
 //    Matrix3f Hfinal;
 //    for(int j = 0; j < listFinal.count() - 4 ;j ++){
 //        QVector<Vector3f> pA2;
@@ -520,15 +513,65 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
 //        }
 //    }
     Matrix3f Hfinal;
-    for(int i = 0; i < listTemp.count(); i ++)
-    {
-        for(int j = 0; j < listTemp.count(); j ++)
-        {
-            for(int k = 0; k < listTemp.count(); k ++)
-            {
 
+    //Create all possibilities
+    QVector<QVector <int>> possibilities;
+    int startPoint = 0;
+    int lastPoint = CVlib::qtdPointsToCalculateH;
+    while(lastPoint <= pairs ){
+        QVector<int> arrangement;
+        while(arrangement.count() < CVlib::qtdPointsToCalculateH){
+            lastPoint = startPoint + CVlib::qtdPointsToCalculateH;
+            for(int i = startPoint; i <  lastPoint; i ++){
+                arrangement.push_back(i);
             }
+        }
+        startPoint++;
+        possibilities.push_back(arrangement);
+    }
+    //Shufle Possibilities;
+    QVector<int> listFinal;
+    //QVector<int> listTemp;
+    for(int i = 0 ; i < pairs; i++){
+       listTemp.push_back(i);
+    }
+    while (listTemp.count()) {
+        int sort = std::round(((double) rand() / (RAND_MAX)) * listTemp.count()-1);
+        if(sort >= 0){
+            listFinal.push_back(listTemp.at(sort));
+            listTemp.removeAt(sort);
+        }
+    }
+    //Matrix3f Hfinal;
+    for(int j = 0; j < possibilities.at(0).count() ;j ++){
 
+        QVector<Vector3f> pA2;
+        QVector<Vector3f> pB2;
+        for(int i = 0; i < 4; i++)
+        {
+            int index = possibilities.at(j).at(i);
+            pA2.push_back(pA.at(index));
+            pB2.push_back(pB.at(index));
+        }
+        //generate h based on 4 random points
+        Matrix3f Htemp;
+        Htemp = dlt(pA2, pB2);
+        int counter = 0;
+        //multiply all point by h and get distance from the expected position
+        for(int i = 0 ; i < pA2.count(); i ++)
+        {
+            Vector3f ptemp;
+            ptemp = Htemp * pA2.at(i);
+            ptemp /= ptemp(2);
+            float distance = getDistance(pB2.at(i), ptemp);
+            if(distance < 0.05)
+            {
+                counter++;
+            }
+        }
+        if(counter >= maxCounter){
+            maxCounter = counter;
+            Hfinal = Htemp;
         }
     }
 

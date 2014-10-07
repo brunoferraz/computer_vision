@@ -72,7 +72,9 @@ public:
     static float getDistance(Vector3f va, Vector3f vb);
 
 
+
     static const int siftParameter = 100;
+    static const int qtdPointsToCalculateH = 4;
     static float ransacThreshold;
 };
 
