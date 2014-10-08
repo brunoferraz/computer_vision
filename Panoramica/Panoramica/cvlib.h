@@ -19,7 +19,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include <opencv2/imgproc/imgproc_c.h>
-#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/nonfree/nonfree.hpp>
 
 
 struct bounds{
@@ -69,11 +70,13 @@ public:
     static QPixmap Mat2QPixmap( const cv::Mat &inMat );
 
     static Matrix3f ransac(QVector<Vector3f> pA, QVector<Vector3f> pB);
+    static QVector<int> getRandomPack(int qtdPoints, int minIndex, int maxIndex);
+    static QVector<int> getRansacInliers(QVector<Vector3f> pA, QVector<Vector3f> pB, Matrix3f H, float threshold);
     static float getDistance(Vector3f va, Vector3f vb);
 
 
 
-    static const int siftParameter = 100;
+    static const int siftParameter = 1000;
     static const int qtdPointsToCalculateH = 4;
     static float ransacThreshold;
 };

@@ -38,8 +38,8 @@ void MainWindow::openFiles(QString *path)
         fileNames = dialog.selectedFiles();
         //qDebug() << fileNames;
     }else{
-        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
-        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
            QImage tempImg = list.at(i);

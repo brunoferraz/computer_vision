@@ -476,106 +476,55 @@ QPixmap CVlib::Mat2QPixmap(const Mat &inMat)
 Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
 {
     int pairs = std::min(pA.count(), pB.count());
-    int maxCounter = 0;
-    QVector<int> listTemp;
-    for(int i = 0 ; i < pairs; i++){
-       listTemp.push_back(i);
-    }
-
-//    Matrix3f Hfinal;
-//    for(int j = 0; j < listFinal.count() - 4 ;j ++){
-//        QVector<Vector3f> pA2;
-//        QVector<Vector3f> pB2;
-//        for(int i = 0; i < 4; i++)
-//        {
-//            pA2.push_back(pA.at(listFinal.at(i)));
-//            pB2.push_back(pB.at(listFinal.at(i)));
-//        }
-//        //generate h based on 4 random points
-//        Matrix3f Htemp;
-//        Htemp = dlt(pA2, pB2);
-//        int counter = 0;
-//        //multiply all point by h and get distance from the expected position
-//        for(int i = 0 ; i < pA2.count(); i ++)
-//        {
-//            Vector3f ptemp;
-//            ptemp = Htemp * pA2.at(i);
-//            ptemp /= ptemp(2);
-//            float distance = getDistance(pB2.at(i), ptemp);
-//            if(distance < 0.5)
-//            {
-//                counter++;
-//            }
-//        }
-//        if(counter >= maxCounter){
-//            maxCounter = counter;
-//            Hfinal = Htemp;
-//        }
-//    }
+    int ransacCounter = 0;
+    QVector<int> inliers, maxInliers;
     Matrix3f Hfinal;
-
-    //Create all possibilities
-    QVector<QVector <int>> possibilities;
-    int startPoint = 0;
-    int lastPoint = CVlib::qtdPointsToCalculateH;
-    while(lastPoint <= pairs ){
-        QVector<int> arrangement;
-        while(arrangement.count() < CVlib::qtdPointsToCalculateH){
-            lastPoint = startPoint + CVlib::qtdPointsToCalculateH;
-            for(int i = startPoint; i <  lastPoint; i ++){
-                arrangement.push_back(i);
-            }
-        }
-        startPoint++;
-        possibilities.push_back(arrangement);
-    }
-    //Shufle Possibilities;
-    QVector<int> listFinal;
-    //QVector<int> listTemp;
-    for(int i = 0 ; i < pairs; i++){
-       listTemp.push_back(i);
-    }
-    while (listTemp.count()) {
-        int sort = std::round(((double) rand() / (RAND_MAX)) * listTemp.count()-1);
-        if(sort >= 0){
-            listFinal.push_back(listTemp.at(sort));
-            listTemp.removeAt(sort);
-        }
-    }
-    //Matrix3f Hfinal;
-    for(int j = 0; j < possibilities.at(0).count() ;j ++){
+    while(ransacCounter < 50){
+        QVector<int> randomPack = CVlib::getRandomPack(CVlib::qtdPointsToCalculateH, 0, pairs);
 
         QVector<Vector3f> pA2;
         QVector<Vector3f> pB2;
-        for(int i = 0; i < 4; i++)
+        for(int i =0 ; i < randomPack.size(); i++ )
         {
-            int index = possibilities.at(j).at(i);
-            pA2.push_back(pA.at(index));
-            pB2.push_back(pB.at(index));
+            pA2.push_back(pA.at(randomPack.at(i)));
+            pB2.push_back(pB.at(randomPack.at(i)));
         }
-        //generate h based on 4 random points
         Matrix3f Htemp;
-        Htemp = dlt(pA2, pB2);
-        int counter = 0;
-        //multiply all point by h and get distance from the expected position
-        for(int i = 0 ; i < pA2.count(); i ++)
-        {
-            Vector3f ptemp;
-            ptemp = Htemp * pA2.at(i);
-            ptemp /= ptemp(2);
-            float distance = getDistance(pB2.at(i), ptemp);
-            if(distance < 0.05)
-            {
-                counter++;
-            }
-        }
-        if(counter >= maxCounter){
-            maxCounter = counter;
+        Htemp = calculate_H(pA2, pB2);
+
+        inliers = getRansacInliers(pA, pB, Htemp, 0.05);
+        if(inliers.size() > maxInliers.size()){
+            maxInliers = inliers;
             Hfinal = Htemp;
         }
+        ransacCounter++;
     }
-
     return Hfinal;
+}
+
+QVector<int> CVlib::getRandomPack(int qtdPoints, int minIndex, int maxIndex)
+{
+    QVector<int> r;
+    while(r.size() < qtdPoints){
+        int sort = minIndex + qrand()%maxIndex;
+        r.push_back(sort);
+    }
+    return r;
+}
+
+QVector<int> CVlib::getRansacInliers(QVector<Vector3f> pA, QVector<Vector3f> pB, Matrix3f H, float threshold)
+{
+    QVector<int> inliers;
+    for(int i = 0; i < pA.size(); i++){
+        Vector3f v;
+        v = H * pA.at(i);
+        v/=v(2);
+        float distance = CVlib::getDistance(v, pB.at(i));
+        if(distance < threshold){
+            inliers.push_back(i);
+        }
+    }
+    return inliers;
 }
 
 float CVlib::getDistance(Vector3f va, Vector3f vb)
