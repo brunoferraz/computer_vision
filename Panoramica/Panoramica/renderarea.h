@@ -23,16 +23,19 @@ class RenderArea : public QLabel
     Q_OBJECT
 public:
     explicit RenderArea(QWidget *parent = 0);
+    QVector<QVector<Vector3f>> allPointLists;
     QVector<Vector3f> pointList;
     QVector<Vector3f> pointListNormalized;
     float pointSize;
     bounds limits;
+    bounds limitsAfterHomografy;
     Vector3f centroid;
     Matrix3f H;
     Mat descriptors;
     std::vector<KeyPoint> keypoints;
 
     Vector3f getCentroid();
+    void closePointList();
     void normalize();
     QVector<Vector3f> getNormalizedPoints();
     void addPoint(float px, float py);

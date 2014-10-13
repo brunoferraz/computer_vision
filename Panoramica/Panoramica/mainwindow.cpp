@@ -64,7 +64,6 @@ void MainWindow::openFiles(QString *path)
             FlannBasedMatcher matcher;
             std::vector< DMatch > matches;
             matcher.match( list_renderArea.at(j-1)->descriptors, list_renderArea.at(j)->descriptors, matches );
-
             double max_dist = 0;
             double min_dist = 100;
 
@@ -99,8 +98,26 @@ void MainWindow::openFiles(QString *path)
                 listaTemp_1.push_back(temp2);
                 //printf( "-- Good Match [%d] Keypoint 1: %d  -- Keypoint 2: %d  \n", i, good_matches[i].queryIdx, good_matches[i].trainIdx );
             }
-            list_renderArea.at(j-1)->pointList = listaTemp_0;
-            list_renderArea.at(j)->pointList = listaTemp_1;
+            for(int  i = 0; i < listaTemp_0.size(); i++){
+                list_renderArea.at(j-1)->addPoint(listaTemp_0.at(i)(0), listaTemp_0.at(i)(1));
+            }
+            for(int  i = 0; i < listaTemp_1.size(); i++){
+                list_renderArea.at(j)->addPoint(listaTemp_1.at(i)(0), listaTemp_1.at(i)(1));
+            }
+
+            list_renderArea.at(j-1)->closePointList();
+            list_renderArea.at(j)->closePointList();
+
+
+
+            Pairs *pairTemp = new Pairs();
+            pairTemp->pointList.push_back(listaTemp_0);
+            pairTemp->pointList.push_back(listaTemp_1);
+            pairTemp->renderList.push_back(list_renderArea.at(j-1));
+            pairTemp->renderList.push_back(list_renderArea.at(j));
+
+            list_Pairs.push_back(pairTemp);
+
             list_renderArea.at(j-1)->update();
             list_renderArea.at(j)->update();
        }
@@ -121,11 +138,16 @@ void MainWindow::adjustImage()
             0,  1,  0,
             0,  0,  1;
     H = identity;
-    list_renderArea.at(0)->H = identity;
-    for(int i = 1 ; i< list_renderArea.size(); i++){
-        H = CVlib::ransac(list_renderArea.at(i -1)->getNormalizedPoints(),list_renderArea.at(i)->getNormalizedPoints());
-        list_renderArea.at(i)->H = H;
+    for(int i = 0; i < list_Pairs.size(); i ++)
+    {
+        H = CVlib::ransac(list_Pairs.at(i)->pointList.at(0), list_Pairs.at(i)->pointList.at(1));
+        list_Pairs.at(i)->H = H;
     }
+//    list_renderArea.at(0)->H = identity;
+//    for(int i = 1 ; i< list_renderArea.size(); i++){
+//        //H = CVlib::ransac(list_renderArea.at(i -1)->getNormalizedPoints(),list_renderArea.at(i)->getNormalizedPoints());
+//        list_renderArea.at(i)->H = H;
+//    }
 
     //H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
     //result = CVlib::generateImage(list.at(i+1),H);
@@ -136,12 +158,15 @@ void MainWindow::adjustImage()
     teste<< 0, 0,  1;
 
     H = identity;
-    for(int i = 0 ; i< list_renderArea.size(); i++){
-        Matrix3f Hn = list_renderArea.at(i)->H.inverse() * H;
-        resultWindow.addImage(list.at(i), Hn, teste, list_renderArea.at(i)->pointList);
-    }
 
-    //resultWindow.addImage(list.at(1), H.inverse(), teste, list_renderArea.at(1)->pointList);
+    int counter = 0;
+    resultWindow.addImage(list.at(0), identity, teste, list_Pairs.at(0)->pointList.at(0));
+    H = list_Pairs.at(0)->H.inverse();
+    resultWindow.addImage(list.at(1), H, teste, list_Pairs.at(0)->pointList.at(1));
+    //H = list_Pairs.at(0)->H.inverse();
+    Matrix3f Hn  = list_Pairs.at(1)->H.inverse() * H;
+    resultWindow.addImage(list.at(2), Hn, teste, list_Pairs.at(1)->pointList.at(0));
+
     resultWindow.assembleImage();
     resultWindow.exec();
 }
@@ -150,6 +175,7 @@ void MainWindow::getPointManual(QMouseEvent *ev)
 {
     //CVlib::printQVector(list_renderArea.at(counter)->pointList);
     counter++;
+    //qDebug() << counter;
     if(isDebug){
         //ev->x();
         adjustImage();

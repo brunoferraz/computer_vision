@@ -51,34 +51,115 @@ void ResultWindow::addImage(QImage img, Matrix3f H, Vector3f centroid, QVector<V
 
 void ResultWindow::assembleImage()
 {
-    bounds limit_begin  = list.at(0)->limits;
-    bounds limit_end    = list.at(list.size()-1)->limits;
-    QImage newImage = QImage(limit_end.right,  std::max(limit_end.bottom, limit_begin.bottom), QImage::Format_ARGB32);
-    renderArea->resize(limit_end.right, std::max(limit_end.bottom, limit_begin.bottom));
+    bounds realLimit;
+    realLimit.left = 0;
+    realLimit.right = 0;
+    realLimit.bottom = 0;
+    realLimit.top = 0 ;
+    for(int i = 0; i < list.size(); i++){
+        realLimit.left = std::min(realLimit.left, list.at(i)->limits.left);
+        realLimit.top = std::min(realLimit.top, list.at(i)->limits.top);
+        realLimit.right = std::max(realLimit.right, list.at(i)->limits.right);
+        realLimit.bottom = std::max(realLimit.bottom, list.at(i)->limits.bottom);
+    }
+    float ty = 0;
+    if(realLimit.top < 0 ){
+        ty = std::abs(realLimit.top);
+    }
+    QImage newImage = QImage(realLimit.right,  realLimit.bottom + ty, QImage::Format_ARGB32);
+    renderArea->resize(realLimit.right, realLimit.bottom + ty);
 
-    QVector<QImage> imageList;
+    QVector<QVector<QVector<Vector4f>>> imageList;
     for(int k = 0; k < list.count(); k++)
     {
-        QImage img = QImage(newImage.width(), newImage.height(),QImage::Format_ARGB32);
+        //QImage img = QImage(newImage.width(), newImage.height(),QImage::Format_ARGB32);
+         QVector<QVector<Vector4f>> img;
         for(int j=0; j < newImage.height(); j++)
         {
+            QVector<Vector4f> line;
             for(int i=0; i< newImage.width(); i++)
             {
                 Vector3f pos;
-                pos << i, j, 1;
+                pos << i, j-ty, 1;
                 pos = list.at(k)->H.inverse() * pos;
                 pos/=pos(2);
                 QColor color(0, 0, 0, 0);
+                int alpha = 0 ;
                 if(pos(0)>0 && pos(0)<list.at(k)->pixmap()->width() && pos(1)>0 && pos(1)<list.at(k)->pixmap()->height()){
                     color = list.at(k)->pixmap()->toImage().pixel(pos(0),pos(1));
+                    alpha = 255;
                     //color = CVlib::interpolate(list.at(k)->pixmap()->toImage(), pos);
-                    newImage.setPixel(i,j,color.rgba());
+                    //img.setPixel(i, j,color.rgba());
+
                 }
-                img.setPixel(i, j,color.rgba());
+                color.setAlpha(alpha);
+                line.push_back(CVlib::colorToVector(color));
+                //img.setPixel(i, j,color.rgba());
             }
+            img.push_back(line);
         }
         imageList.push_back(img);
     }
+    QVector<QVector<Vector4f>> img;
+    for(int j=0; j< newImage.height(); j++)
+    {
+        QVector<Vector4f> line;
+        for(int i=0; i< newImage.width(); i++)
+        {
+            Vector4f color;
+            color << 0, 0, 0, 0;
+            line.push_back(color);
+        }
+        img.push_back(line);
+    }
+    for(int k =0; k < imageList.count(); k++)
+    {
+        for(int j=0; j< newImage.height(); j++)
+        {
+            QVector<Vector4f> line;
+            for(int i=0; i< newImage.width(); i++)
+            {
+                Vector4f color;
+                if(img.at(j).at(i)(3) ==0){
+                    color =  imageList.at(k).at(j).at(i);
+                }else{
+                    color = img.at(j).at(i);
+                }
+                line.push_back(color);
+            }
+            img.replace(j, line);
+        }
+    }
+    for(int j=0; j< newImage.height(); j++)
+    {
+        for(int i=0; i< newImage.width(); i++)
+        {
+            QColor color =CVlib::vectorToColor(img.at(j).at(i));
+            newImage.setPixel(i, j, color.rgba());
+        }
+     }
+
+//    for(int j=0; j < newImage.height(); j++)
+//    {
+//        for(int i=0; i< newImage.width(); i++)
+//        {
+//            Vector4f colorVec;
+//            colorVec << 0, 0, 0, 0;
+//            int ratio = 1;
+//            for(int k =0; k < imageList.count(); k++)
+//            {
+//                Vector4f color = imageList.at(k).at(j).at(i);
+//                if(color(3)!=0){
+//                    colorVec += color;
+//                    //ratio++;
+//                }
+//            }
+//            //std::cout << colorVec.transpose() << std::endl;
+//            colorVec /= ratio;
+//            colorVec(3) = 255;
+//            newImage.setPixel(i,j, CVlib::vectorToColor(colorVec).rgba());
+//        }
+//    }
     QPixmap pix = QPixmap::fromImage(newImage);
     pix.scaledToWidth(100);
     QImage finalImage = pix.toImage();

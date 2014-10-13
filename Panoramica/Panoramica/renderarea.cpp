@@ -17,6 +17,12 @@ Vector3f RenderArea::getCentroid()
     return RenderArea::centroid;
 }
 
+void RenderArea::closePointList()
+{
+    allPointLists.push_back(pointList);
+    pointList.clear();
+}
+
 void RenderArea::normalize()
 {
     //pointListNormalized = pointList;
@@ -29,7 +35,14 @@ void RenderArea::normalize()
 QVector<Vector3f> RenderArea::getNormalizedPoints()
 {
     //Adjustments needed to get only good points
-    return pointList;
+    QVector<Vector3f> allpoints;
+    for(int i = 0; i < allPointLists.size(); i++)
+    {
+        for(int j=0; j < allPointLists.at(i).size(); j++){
+            allpoints.push_back(allPointLists.at(i).at(j));
+        }
+    }
+    return allpoints;
 }
 
 void RenderArea::addPoint(float px, float py)
@@ -37,7 +50,7 @@ void RenderArea::addPoint(float px, float py)
     Vector3f point;
     point << px, py, 1;
     pointList.push_back(point);
-    RenderArea::getCentroid();
+    //RenderArea::getCentroid();
 }
 
 void RenderArea::findPoints()
@@ -53,7 +66,7 @@ void RenderArea::findPoints()
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
     if(ev->button()==1){
-        if(pointList.count()>=8){
+        if(allPointLists.count()>=2){
             normalize();
             emit renderAreaClicked(ev);
         }else{
@@ -69,18 +82,21 @@ void RenderArea::mouseReleaseEvent(QMouseEvent *ev){
 
 void RenderArea::paintEvent(QPaintEvent *ev){
     QLabel::paintEvent(ev);
-    if(pointList.count()>0){
-        RenderArea::getCentroid();
+    if(allPointLists.count()>0){
+        //RenderArea::getCentroid();
         QPainter painter(this);
-        for(int i = 0; i < pointList.count(); i++){
-            painter.setRenderHint(QPainter::Antialiasing, true);
-            painter.setBrush(Qt::red);
-            painter.setPen(Qt::NoPen);
-            painter.drawEllipse(pointList.at(i)(0)-pointSize/2, pointList.at(i)(1)-pointSize/2, pointSize, pointSize);
+        for(int j = 0; j < allPointLists.size(); j++){
+            for(int i = 0; i < allPointLists.at(j).size(); i++){
+                Vector3f p = allPointLists.at(j).at(i);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                painter.setBrush(Qt::red);
+                painter.setPen(Qt::NoPen);
+                painter.drawEllipse(p(0)-pointSize/2, p(1)-pointSize/2, pointSize, pointSize);
+            }
         }
         painter.setBrush(Qt::blue);
         //std::cout << RenderArea::centroid.transpose() << std::endl;
-        painter.drawEllipse(RenderArea::centroid(0),RenderArea::centroid(1), 10,10);
+        //painter.drawEllipse(RenderArea::centroid(0),RenderArea::centroid(1), 10,10);
     }
     //painter.drawEllipse(50, 50, 10,10);
 }

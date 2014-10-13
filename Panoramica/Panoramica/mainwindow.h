@@ -24,7 +24,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/flann/flann.hpp>
-
+#include <pairs.h>
 
 
 using namespace Eigen;
@@ -44,6 +44,9 @@ public:
     void openFiles(QString *path = 0);
     QVector<QImage> list;
     QVector<RenderArea *> list_renderArea;
+    QVector<Pairs *> list_Pairs;
+
+
     ResultWindow resultWindow;
 
     static const bool isDebug = true;
