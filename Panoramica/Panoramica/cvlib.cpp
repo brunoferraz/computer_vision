@@ -479,7 +479,14 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
     int ransacCounter = 0;
     QVector<int> inliers, maxInliers;
     Matrix3f Hfinal;
-    while(ransacCounter < 50){
+    double N = 50;
+    double Ni = 0;
+    double d;
+    double p = 0.99;
+    double w = 1; // Inliers likelihood
+    double e = 0; // Outliers likelihood
+    bool adaptativeSearch = true;
+    while(ransacCounter < N){
         QVector<int> randomPack = CVlib::getRandomPack(CVlib::qtdPointsToCalculateH, 0, pairs);
 
         QVector<Vector3f> pA2;
@@ -497,8 +504,28 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
             maxInliers = inliers;
             Hfinal = Htemp;
         }
+        if(adaptativeSearch){
+            e = 1 - ((float)inliers.size()/pairs);
+            if(e < w){
+                w = e;
+                //Ni = std::log(1 − p)/ std::log(1 − std::pow(1 − w, randomPack.size()));
+                Ni = log(1-p)/log(1 - pow(1 -w,randomPack.size()));
+                if(Ni < N){
+                     adaptativeSearch = false;
+                     qDebug() << "N " << N;
+                     qDebug() << "Ni " << Ni;
+                }else{
+                    qDebug() << "N " << N;
+                    qDebug() << "Ni " << Ni;
+                    N = Ni;
+                }
+            }
+        }
         ransacCounter++;
+        if(ransacCounter >= 1000)
+            break;
     }
+     qDebug() << ransacCounter;
     return Hfinal;
 }
 

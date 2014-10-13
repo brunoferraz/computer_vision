@@ -51,7 +51,6 @@ void ResultWindow::addImage(QImage img, Matrix3f H, Vector3f centroid, QVector<V
 
 void ResultWindow::assembleImage()
 {
-
     QImage newImage = QImage(list.at(1)->limits.right,  std::max(list.at(1)->limits.bottom, list.at(0)->limits.bottom), QImage::Format_ARGB32);
     renderArea->resize(list.at(1)->limits.right, std::max(list.at(1)->limits.bottom, list.at(0)->limits.bottom));
 //    QImage img;

@@ -38,8 +38,10 @@ void MainWindow::openFiles(QString *path)
         fileNames = dialog.selectedFiles();
         //qDebug() << fileNames;
     }else{
-        list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
-        list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+        //list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
+        //list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite6.jpg"));
+        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite7.jpg"));
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
            QImage tempImg = list.at(i);
@@ -110,18 +112,24 @@ void MainWindow::adjustImage()
     QImage result;
     int i = 0;
     //H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+    for()
+
     H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
     result = CVlib::generateImage(list.at(i+1),H);
 
 
     RenderArea *resultArea = resultWindow.renderArea;
+
     Matrix3f identity;
     identity <<
             1,  0,  0,
             0,  1,  0,
             0,  0,  1;
+
     Vector3f teste;
     teste<< 0, 0,  1;
+
+
     resultWindow.addImage(list.at(0), identity, teste, list_renderArea.at(0)->pointList);
     resultWindow.addImage(list.at(1), H.inverse(), teste, list_renderArea.at(1)->pointList);
     resultWindow.assembleImage();
