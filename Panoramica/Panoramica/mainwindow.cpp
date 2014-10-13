@@ -38,10 +38,14 @@ void MainWindow::openFiles(QString *path)
         fileNames = dialog.selectedFiles();
         //qDebug() << fileNames;
     }else{
-        //list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
-        //list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
+//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_2_mini.png"));
+
+        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite5.jpg"));
         list.push_back(QImage(QDir::currentPath() + "/assets/yosemite6.jpg"));
         list.push_back(QImage(QDir::currentPath() + "/assets/yosemite7.jpg"));
+
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
            QImage tempImg = list.at(i);
@@ -51,7 +55,6 @@ void MainWindow::openFiles(QString *path)
            //Get debug Points from debug list
            //tempArea->pointList = DebugSet::getDebugSet(i);
            tempArea->findPoints();
-
            tempArea->update();
            list_renderArea.push_back(tempArea);
            connect(tempArea,SIGNAL(renderAreaClicked(QMouseEvent*)),telaTemp,SLOT(getPointManual(QMouseEvent*)));
@@ -81,7 +84,7 @@ void MainWindow::openFiles(QString *path)
             QVector<Vector3f> listaTemp_0;
             QVector<Vector3f> listaTemp_1;
 
-            std::cout << matches.size() << std::endl;
+            //std::cout << matches.size() << std::endl;
             for(int i = 1 ; i < good_matches.size(); i++){
                 float x = list_renderArea.at(j-1)->keypoints.at(good_matches[i].queryIdx).pt.x;
                 float y = list_renderArea.at(j-1)->keypoints.at(good_matches[i].queryIdx).pt.y;
@@ -112,26 +115,33 @@ void MainWindow::adjustImage()
     QImage result;
     int i = 0;
     //H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
-    for()
-
-    H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
-    result = CVlib::generateImage(list.at(i+1),H);
-
-
-    RenderArea *resultArea = resultWindow.renderArea;
-
     Matrix3f identity;
     identity <<
             1,  0,  0,
             0,  1,  0,
             0,  0,  1;
+    H = identity;
+    list_renderArea.at(0)->H = identity;
+    for(int i = 1 ; i< list_renderArea.size(); i++){
+        H = CVlib::ransac(list_renderArea.at(i -1)->getNormalizedPoints(),list_renderArea.at(i)->getNormalizedPoints());
+        list_renderArea.at(i)->H = H;
+    }
+
+    //H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
+    //result = CVlib::generateImage(list.at(i+1),H);
+
+    RenderArea *resultArea = resultWindow.renderArea;
 
     Vector3f teste;
     teste<< 0, 0,  1;
 
+    H = identity;
+    for(int i = 0 ; i< list_renderArea.size(); i++){
+        Matrix3f Hn = list_renderArea.at(i)->H.inverse() * H;
+        resultWindow.addImage(list.at(i), Hn, teste, list_renderArea.at(i)->pointList);
+    }
 
-    resultWindow.addImage(list.at(0), identity, teste, list_renderArea.at(0)->pointList);
-    resultWindow.addImage(list.at(1), H.inverse(), teste, list_renderArea.at(1)->pointList);
+    //resultWindow.addImage(list.at(1), H.inverse(), teste, list_renderArea.at(1)->pointList);
     resultWindow.assembleImage();
     resultWindow.exec();
 }

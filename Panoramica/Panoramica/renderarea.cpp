@@ -38,7 +38,6 @@ void RenderArea::addPoint(float px, float py)
     point << px, py, 1;
     pointList.push_back(point);
     RenderArea::getCentroid();
-
 }
 
 void RenderArea::findPoints()

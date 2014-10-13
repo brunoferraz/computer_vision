@@ -482,6 +482,7 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
     double N = 50;
     double Ni = 0;
     double d;
+//    double p = 0.1;
     double p = 0.99;
     double w = 1; // Inliers likelihood
     double e = 0; // Outliers likelihood
@@ -512,11 +513,11 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
                 Ni = log(1-p)/log(1 - pow(1 -w,randomPack.size()));
                 if(Ni < N){
                      adaptativeSearch = false;
-                     qDebug() << "N " << N;
-                     qDebug() << "Ni " << Ni;
+//                     qDebug() << "N " << N;
+//                     qDebug() << "Ni " << Ni;
                 }else{
-                    qDebug() << "N " << N;
-                    qDebug() << "Ni " << Ni;
+//                    qDebug() << "N " << N;
+//                    qDebug() << "Ni " << Ni;
                     N = Ni;
                 }
             }

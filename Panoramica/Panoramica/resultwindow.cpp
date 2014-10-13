@@ -51,26 +51,11 @@ void ResultWindow::addImage(QImage img, Matrix3f H, Vector3f centroid, QVector<V
 
 void ResultWindow::assembleImage()
 {
-    QImage newImage = QImage(list.at(1)->limits.right,  std::max(list.at(1)->limits.bottom, list.at(0)->limits.bottom), QImage::Format_ARGB32);
-    renderArea->resize(list.at(1)->limits.right, std::max(list.at(1)->limits.bottom, list.at(0)->limits.bottom));
-//    QImage img;
-//    for(int k = 0; k <list.count();k++){
-//        img = list.at(k)->pixmap()->toImage();
-//        for(int j=0; j < img.height(); j++){
-//            for(int i=0; i < img.width(); i++){
-//                Vector3f pos;
-//                pos << i, j, 1;
-//                pos = list.at(k)->H * pos;
-//                pos /= pos(2);
-//                QColor color = img.pixel(i,j);
-//                if(pos(0)>0 && pos(0)<newImage.width() && pos(1) > 0 && pos(1)< newImage.height())
-//                {
-//                    newImage.setPixel(pos(0), pos(1), color.rgba());
-//                }
-//            }
-//        }
-//    }
-//    renderArea->setPixmap(QPixmap::fromImage(newImage));
+    bounds limit_begin  = list.at(0)->limits;
+    bounds limit_end    = list.at(list.size()-1)->limits;
+    QImage newImage = QImage(limit_end.right,  std::max(limit_end.bottom, limit_begin.bottom), QImage::Format_ARGB32);
+    renderArea->resize(limit_end.right, std::max(limit_end.bottom, limit_begin.bottom));
+
     QVector<QImage> imageList;
     for(int k = 0; k < list.count(); k++)
     {
