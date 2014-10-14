@@ -25,6 +25,8 @@
 #include "opencv2/nonfree/features2d.hpp"
 #include <opencv2/flann/flann.hpp>
 #include <pairs.h>
+#include <QPaintEvent>
+#include <QPainter>
 
 
 using namespace Eigen;
@@ -57,7 +59,9 @@ private:
 
 public slots:
     void getPointManual(QMouseEvent *ev);
+    void paintEvent(QPaintEvent * ev);
 protected:
+
 
 };
 

@@ -66,8 +66,12 @@ void ResultWindow::assembleImage()
     if(realLimit.top < 0 ){
         ty = std::abs(realLimit.top);
     }
-    QImage newImage = QImage(realLimit.right,  realLimit.bottom + ty, QImage::Format_ARGB32);
-    renderArea->resize(realLimit.right, realLimit.bottom + ty);
+    float tx = 0;
+    if(realLimit.left < 0){
+        tx = std::abs(realLimit.left);
+    }
+    QImage newImage = QImage(realLimit.right + tx,  realLimit.bottom + ty, QImage::Format_ARGB32);
+    renderArea->resize(realLimit.right +tx, realLimit.bottom + ty);
 
     QVector<QVector<QVector<Vector4f>>> imageList;
     for(int k = 0; k < list.count(); k++)
@@ -80,7 +84,7 @@ void ResultWindow::assembleImage()
             for(int i=0; i< newImage.width(); i++)
             {
                 Vector3f pos;
-                pos << i, j-ty, 1;
+                pos << i-tx, j-ty, 1;
                 pos = list.at(k)->H.inverse() * pos;
                 pos/=pos(2);
                 QColor color(0, 0, 0, 0);
@@ -164,4 +168,5 @@ void ResultWindow::assembleImage()
     pix.scaledToWidth(100);
     QImage finalImage = pix.toImage();
     renderArea->setPixmap(QPixmap::fromImage(finalImage));
+    finalImage.save("panoramica.png");
 }

@@ -11,7 +11,7 @@ public:
     QVector<RenderArea *> renderList;
     QVector<QVector<Vector3f>> pointList;
     Matrix3f H;
-    Matrix3f H_relative;
+    Matrix3f H_absolut;
 };
 
 #endif // PAIRS_H

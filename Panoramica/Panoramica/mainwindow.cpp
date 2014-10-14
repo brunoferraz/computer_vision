@@ -45,6 +45,9 @@ void MainWindow::openFiles(QString *path)
         list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
         list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
         list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite3.jpg"));
+        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite4.jpg"));
+        //list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite5.jpg"));
+        //list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite6.jpg"));
 
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
@@ -125,6 +128,7 @@ void MainWindow::openFiles(QString *path)
             list_renderArea.at(j)->update();
        }
    }
+    //this->adjustSize(800, 600);
 }
 
 void MainWindow::adjustImage()
@@ -136,6 +140,8 @@ void MainWindow::adjustImage()
     int i = 0;
     //H = CVlib::dlt(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
     Matrix3f identity;
+    Vector3f translation;
+    translation << 0, 0, 0;
     identity <<
             1,  0,  0,
             0,  1,  0,
@@ -146,48 +152,58 @@ void MainWindow::adjustImage()
         H = CVlib::ransac(list_Pairs.at(i)->pointList.at(0), list_Pairs.at(i)->pointList.at(1));
         list_Pairs.at(i)->H = H;
     }
-//    list_renderArea.at(0)->H = identity;
-//    for(int i = 1 ; i< list_renderArea.size(); i++){
-//        //H = CVlib::ransac(list_renderArea.at(i -1)->getNormalizedPoints(),list_renderArea.at(i)->getNormalizedPoints());
-//        list_renderArea.at(i)->H = H;
+    H = identity;
+    int limitPair = 0;
+    int imageBase = CVlib::imageCenter;
+    int pair = std::max(imageBase -1, 0);
+    int limit = 0;
+    if(CVlib::imageCenter == 0) limit =1;
+    for(int i = pair; i >=limit; i--){
+        H *= list_Pairs.at(i)->H;
+        list_Pairs.at(i)->H_absolut = H;
+    }
+    resultWindow.addImage(*list_Pairs.at(0)->imageList.at(0), H, translation, list_Pairs.at(0)->pointList.at(0));
+    int img = 1;
+    for(int i = 0; i < list_Pairs.count(); i++){
+        H *=  list_Pairs.at(i)->H.inverse();
+        resultWindow.addImage(*list_Pairs.at(i)->imageList.at(img), H, translation, list_Pairs.at(i)->pointList.at(img));
+        std::cout << H  <<std::endl;
+        std::cout << " "  <<std::endl;
+    }
+
+
+
+//    pair = imageBase;
+//    for(int i = pair; i < list_Pairs.count(); i++){
+//        H *= list_Pairs.at(i)->H.inverse();
+//        list_Pairs.at(i)->H_absolut = H;
+//    }
+//    int counter = 1;
+//    //H = identity;
+//    for(int i = 0; i < list_Pairs.count(); i++){
+//        //H *=  list_Pairs.at(i)->H.inverse();
+//        counter++;
+//        int img = 1;
+//        if(counter == imageBase){
+//           // H = identity;
+//        }else{
+//            H *= list_Pairs.at(i)->H_absolut;
+//        }
+//        resultWindow.addImage(*list_Pairs.at(i)->imageList.at(img), H, translation, list_Pairs.at(i)->pointList.at(img));
 //    }
 
-    //H = CVlib::ransac(list_renderArea.at(i)->getNormalizedPoints(),list_renderArea.at(i + 1)->getNormalizedPoints());
-    //result = CVlib::generateImage(list.at(i+1),H);
 
-    RenderArea *resultArea = resultWindow.renderArea;
 
-    Vector3f teste;
-    teste<< 0, 0,  1;
+//    resultWindow.addImage(*list_Pairs.at(limitPair)->imageList.at(0), H, translation, list_Pairs.at(limitPair)->pointList.at(0));
+//    H *=  list_Pairs.at(0)->H.inverse();
+//    resultWindow.addImage(*list_Pairs.at(0)->imageList.at(1), H, translation, list_Pairs.at(0)->pointList.at(1));
+//    H *=  list_Pairs.at(1)->H.inverse();
+//    resultWindow.addImage(*list_Pairs.at(1)->imageList.at(1), H, translation, list_Pairs.at(1)->pointList.at(1));
 
-//    H = identity;
 
-    int imageBase   = 1;
-    Matrix3f Hn = identity;
-    int pair = (imageBase/2)-1; // minus one because i'll walk on array from right to left;
-    //prepareHn;
-    for(int i = pair; i >= 0; i--){
-        Hn*= list_Pairs.at(pair)->H.inverse();
-    }
-    int image = 0;
-    resultWindow.addImage(*list_Pairs.at(pair)->imageList.at(image), Hn, teste, list_Pairs.at(pair)->pointList.at(image));
-    image = 1;
-    for(int i = 0; i < list.count()-1; i++){
-        int pair = i/2;
-        int image = 1;
-        if(i == 0){
-            image = 0;
-        }
-        if(i<imageBase){
-            Hn *= list_Pairs.at(pair)->H;
-        }else if(i==imageBase){
-            Hn *= Hn.inverse();
-        }else if(i>imageBase){
-            Hn *= list_Pairs.at(pair)->H.inverse();
-        }
-        resultWindow.addImage(*list.at(counter), Hn, teste, list_Pairs.at(pair)->pointList.at(image));
-        counter++;
-    }
+
+
+
 
 
     resultWindow.assembleImage();
@@ -203,4 +219,10 @@ void MainWindow::getPointManual(QMouseEvent *ev)
         //ev->x();
         adjustImage();
     }
+}
+
+void MainWindow::paintEvent(QPaintEvent *ev)
+{
+    //QPainter p;
+    //p.scale(0.1,0.1);
 }
