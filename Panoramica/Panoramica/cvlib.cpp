@@ -479,7 +479,7 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
     int ransacCounter = 0;
     QVector<int> inliers, maxInliers;
     Matrix3f Hfinal;
-    double N = 50;
+    double N = 72;
     double Ni = 0;
     double d;
 //    double p = 0.1;
@@ -510,7 +510,8 @@ Matrix3f CVlib::ransac(QVector<Vector3f> pA, QVector<Vector3f> pB)
             if(e < w){
                 w = e;
                 //Ni = std::log(1 − p)/ std::log(1 − std::pow(1 − w, randomPack.size()));
-                Ni = log(1-p)/log(1 - pow(1 -w,randomPack.size()));
+                //Ni = log(1-p)/log(1 - pow(1 -w,randomPack.size()));
+                Ni = 72;
                 if(Ni < N){
                      adaptativeSearch = false;
 //                     qDebug() << "N " << N;

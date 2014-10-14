@@ -42,7 +42,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void openFiles(QString *path = 0);
-    QVector<QImage> list;
+    QVector<QImage *> list;
     QVector<RenderArea *> list_renderArea;
     QVector<Pairs *> list_Pairs;
 

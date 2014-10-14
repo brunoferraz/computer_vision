@@ -42,16 +42,16 @@ void MainWindow::openFiles(QString *path)
 //            list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
 //            list.push_back(QImage(QDir::currentPath() + "/assets/pan_2_mini.png"));
 
-        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite5.jpg"));
-        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite6.jpg"));
-        list.push_back(QImage(QDir::currentPath() + "/assets/yosemite7.jpg"));
+        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
+        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
+        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite3.jpg"));
 
         for(int i = 0 ; i < list.count(); i++){
            RenderArea *tempArea = new RenderArea(this);
-           QImage tempImg = list.at(i);
-           tempArea->resize(tempImg.width(), tempImg.height());
-           tempArea->move((tempImg.width()+ 10) * i + 10, 20);
-           tempArea->setPixmap(QPixmap::fromImage(tempImg));
+           QImage *tempImg = list.at(i);
+           tempArea->resize(tempImg->width(), tempImg->height());
+           tempArea->move((tempImg->width()+ 10) * i + 10, 20);
+           tempArea->setPixmap(QPixmap::fromImage(*tempImg));
            //Get debug Points from debug list
            //tempArea->pointList = DebugSet::getDebugSet(i);
            tempArea->findPoints();
@@ -115,6 +115,9 @@ void MainWindow::openFiles(QString *path)
             pairTemp->pointList.push_back(listaTemp_1);
             pairTemp->renderList.push_back(list_renderArea.at(j-1));
             pairTemp->renderList.push_back(list_renderArea.at(j));
+            pairTemp->imageList.push_back(list.at(j-1));
+            pairTemp->imageList.push_back(list.at(j));
+
 
             list_Pairs.push_back(pairTemp);
 
@@ -157,15 +160,35 @@ void MainWindow::adjustImage()
     Vector3f teste;
     teste<< 0, 0,  1;
 
-    H = identity;
+//    H = identity;
 
-    int counter = 0;
-    resultWindow.addImage(list.at(0), identity, teste, list_Pairs.at(0)->pointList.at(0));
-    H = list_Pairs.at(0)->H.inverse();
-    resultWindow.addImage(list.at(1), H, teste, list_Pairs.at(0)->pointList.at(1));
-    //H = list_Pairs.at(0)->H.inverse();
-    Matrix3f Hn  = list_Pairs.at(1)->H.inverse() * H;
-    resultWindow.addImage(list.at(2), Hn, teste, list_Pairs.at(1)->pointList.at(0));
+    int imageBase   = 1;
+    Matrix3f Hn = identity;
+    int pair = (imageBase/2)-1; // minus one because i'll walk on array from right to left;
+    //prepareHn;
+    for(int i = pair; i >= 0; i--){
+        Hn*= list_Pairs.at(pair)->H.inverse();
+    }
+    int image = 0;
+    resultWindow.addImage(*list_Pairs.at(pair)->imageList.at(image), Hn, teste, list_Pairs.at(pair)->pointList.at(image));
+    image = 1;
+    for(int i = 0; i < list.count()-1; i++){
+        int pair = i/2;
+        int image = 1;
+        if(i == 0){
+            image = 0;
+        }
+        if(i<imageBase){
+            Hn *= list_Pairs.at(pair)->H;
+        }else if(i==imageBase){
+            Hn *= Hn.inverse();
+        }else if(i>imageBase){
+            Hn *= list_Pairs.at(pair)->H.inverse();
+        }
+        resultWindow.addImage(*list.at(counter), Hn, teste, list_Pairs.at(pair)->pointList.at(image));
+        counter++;
+    }
+
 
     resultWindow.assembleImage();
     resultWindow.exec();

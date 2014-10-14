@@ -7,9 +7,11 @@ class Pairs
 {
 public:
     Pairs();
+    QVector<QImage *> imageList;
     QVector<RenderArea *> renderList;
     QVector<QVector<Vector3f>> pointList;
     Matrix3f H;
+    Matrix3f H_relative;
 };
 
 #endif // PAIRS_H
