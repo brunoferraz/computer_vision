@@ -38,15 +38,15 @@ void MainWindow::openFiles(QString *path)
         fileNames = dialog.selectedFiles();
         //qDebug() << fileNames;
     }else{
-//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
-//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
-//            list.push_back(QImage(QDir::currentPath() + "/assets/pan_2_mini.png"));
+//            list.push_back(new QImage(QDir::currentPath() + "/assets/pan_0_mini.png"));
+//            list.push_back(new QImage(QDir::currentPath() + "/assets/pan_1_mini.png"));
+//            list.push_back(new QImage(QDir::currentPath() + "/assets/pan_2_mini.png"));
 
-        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
-        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
-        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite3.jpg"));
-        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite4.jpg"));
-        //list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite5.jpg"));
+//        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite1.jpg"));
+//        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite2.jpg"));
+//        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite3.jpg"));
+//        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite4.jpg"));
+//        list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite5.jpg"));
         //list.push_back(new QImage(QDir::currentPath() + "/assets/yosemite6.jpg"));
 
         for(int i = 0 ; i < list.count(); i++){

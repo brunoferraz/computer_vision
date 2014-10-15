@@ -78,7 +78,7 @@ public:
 
     static const int siftParameter = 20000;
     static const int qtdPointsToCalculateH = 4;
-    static const int imageCenter = 2;
+    static const int imageCenter = 1;
     static float ransacThreshold;
 };
 

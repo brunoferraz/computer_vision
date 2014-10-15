@@ -9,7 +9,7 @@ ResultWindow::ResultWindow(QWidget *parent) :
     renderArea = ui->label;
     //container = ui->widget;
     //container->resize(1000, 500);
-    this->resize(1000,500);
+    //this->resize(1000,500);
 }
 
 ResultWindow::~ResultWindow()
@@ -90,7 +90,8 @@ void ResultWindow::assembleImage()
                 QColor color(0, 0, 0, 0);
                 int alpha = 0 ;
                 if(pos(0)>0 && pos(0)<list.at(k)->pixmap()->width() && pos(1)>0 && pos(1)<list.at(k)->pixmap()->height()){
-                    color = list.at(k)->pixmap()->toImage().pixel(pos(0),pos(1));
+                    //color = list.at(k)->pixmap()->toImage().pixel(pos(0),pos(1));
+                    color = CVlib::interpolate(list.at(k)->pixmap()->toImage(), pos);
                     alpha = 255;
                     //color = CVlib::interpolate(list.at(k)->pixmap()->toImage(), pos);
                     //img.setPixel(i, j,color.rgba());
@@ -165,8 +166,8 @@ void ResultWindow::assembleImage()
 //        }
 //    }
     QPixmap pix = QPixmap::fromImage(newImage);
-    pix.scaledToWidth(100);
+    //pix.scaledToWidth(100);
     QImage finalImage = pix.toImage();
     renderArea->setPixmap(QPixmap::fromImage(finalImage));
-    finalImage.save("panoramica.png");
+    finalImage.save("geometria.png");
 }
