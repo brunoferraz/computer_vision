@@ -31,6 +31,7 @@ public:
     bounds limitsAfterHomografy;
     Vector3f centroid;
     Matrix3f H;
+
     Mat descriptors;
     std::vector<KeyPoint> keypoints;
 

@@ -112,7 +112,6 @@ void MainWindow::openFiles(QString *path)
             list_renderArea.at(j)->closePointList();
 
 
-
             Pairs *pairTemp = new Pairs();
             pairTemp->pointList.push_back(listaTemp_0);
             pairTemp->pointList.push_back(listaTemp_1);
