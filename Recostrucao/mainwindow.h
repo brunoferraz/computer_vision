@@ -40,6 +40,7 @@ public:
 
     void triangulation();
     void triangulation(Pair& pair);
+    void triangulation2(Pair& pair);
 
     void writeFile();
 

@@ -35,6 +35,7 @@ public:
     Eigen::Matrix3f K;
     QList<Eigen::Matrix3f> listP;
     void normalize();
+    void denormalize();
 
     void calculateK();
 

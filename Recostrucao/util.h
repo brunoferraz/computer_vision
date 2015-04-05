@@ -60,6 +60,7 @@ public:
 
     static void SolveCS(float& c, float& s, float a, float b);
     static void RQdecomposition(Eigen::MatrixXf A, Eigen::Matrix3f& R, Eigen::Matrix3f& Q);
+    static void QRdecomposition(Eigen::MatrixXf A, Eigen::Matrix3f& R, Eigen::Matrix3f& Q);
 
 };
 

@@ -9,13 +9,22 @@ QList<Eigen::Vector3f> Util::parsePoints(const QString str)
 {
     QStringList list;
     QList<Eigen::Vector3f> pointList;
-    list = str.split("\n");
-    for(int i = 0; i< list.length()-1; i++){
+//    list = str.split("\n");
+//    for(int i = 0; i< list.length()-1; i++){
+//        Eigen::Vector3f v;
+//        QStringList point = list.at(i).split(" ");
+//        v << point.at(0).toFloat(), point.at(1).toFloat(), 1;
+//        pointList.push_back(v);
+//    }
+    std::istringstream iss(str.toStdString().c_str());
+    while(!iss.eof()){
+        float x, y;
+        iss >> x;
+        iss >> y;
         Eigen::Vector3f v;
-        QStringList point = list.at(i).split(" ");
-        v << point.at(0).toFloat(), point.at(1).toFloat(), 1;
+        v<< x, y, 1;
         pointList.push_back(v);
-    }
+     }
     return pointList;
 }
 
@@ -300,9 +309,39 @@ void Util::RQdecomposition(Eigen::MatrixXf A, Eigen::Matrix3f &R, Eigen::Matrix3
 
     if(std::abs(R(1,0)) > 0.00005 || std::abs(R(2,0)) > 0.00005 || std::abs(R(2,1)) > 0.00005) qDebug() << "PROBLEM WITH RQdecomposition";
 
-    if(R(1,0)!= 0) R(1,0) = 0;
-    if(R(2,0)!= 0) R(2,0) = 0;
-    if(R(2,1)!= 0) R(2,1) = 0;
+//    if(R(1,0)!= 0) R(1,0) = 0;
+//    if(R(2,0)!= 0) R(2,0) = 0;
+//    if(R(2,1)!= 0) R(2,1) = 0;
 
-    Q = Qx.transpose() * Qy.transpose() * Qz.transpose();
+
+    Q =Qz.transpose()  * Qy.transpose() * Qx.transpose();
+
+    if(R(0,0) < 0)
+    {
+        R.col(0) *= -1;
+        Q.row(0) *= -1;
+    }
+    if(R(1,1) < 0)
+    {
+        R.col(1) *= -1;
+        Q.row(1) *= -1;
+    }
+    if(R(2,2) < 0)
+    {
+        R.col(2) *= -1;
+        Q.row(2) *= -1;
+    }
+}
+
+void Util::QRdecomposition(Eigen::MatrixXf A, Eigen::Matrix3f &R, Eigen::Matrix3f &Q)
+{
+    Eigen::Matrix3f m;
+    m = A.topLeftCorner<3,3>();
+//    Eigen::FullPivHouseholderQR<Eigen::Matrix3f> qr(m.rows(), m.cols());
+//    Eigen::HouseholderQR<Eigen::Matrix3f> qr(m);
+    Eigen::ColPivHouseholderQR<Eigen::Matrix3f> qr(m);
+    qr.solve(m);
+    R = qr.householderQ().inverse() * qr.matrixQR();
+    Q = qr.householderQ();
+//    std::cout << qr.matrixQ().inverse() * qr.matrixQR() << std::endl;
 }

@@ -37,14 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
         qtab->show();
         listCanvas.push_back(c);
     }
-
     for(int i = 0; i < listCanvas.length()-1; i++){
         Pair *p = new Pair(listCanvas.at(i),listCanvas.at(i+1));
         listPair.push_back(p);
     }
-    for(int i = 0; i < listCanvas.length()-1; i++){
-        listCanvas.at(i)->normalize();
-    }
+    normalize();
     //montar uma estrutura que sirva tanto para o data set quanto para os pontos do SIFT
 
     //    1 calcular F usando o método de 8 ou 7 pontos, comecem com o de 8 que é mais fácil
@@ -68,6 +65,9 @@ MainWindow::~MainWindow()
 void MainWindow::normalize()
 {
     //find centroid
+    for(int i = 0; i < listCanvas.length(); i++){
+        listCanvas.at(i)->normalize();
+    }
 }
 
 void MainWindow::calculateF()
@@ -86,13 +86,16 @@ void MainWindow::calculateF()
             }
         }
     }
-    Eigen::MatrixXf A(8,9);
-    for(int i = 0; i < randomPairs.length();i++){
+    Eigen::MatrixXf A(total,9);
+    //for(int i = 0; i < randomPairs.length();i++){
+    for(int i = 0; i < total;i++){
         Eigen::VectorXf r(9);
         Eigen::Vector3f x;
         Eigen::Vector3f xl;
-        x = listCanvas.at(0)->listPointsDebug.at(randomPairs.at(i));
-        xl = listCanvas.at(1)->listPointsDebug.at(randomPairs.at(i));
+        //x = listCanvas.at(0)->listPointsDebug.at(randomPairs.at(i));
+        //xl = listCanvas.at(1)->listPointsDebug.at(randomPairs.at(i));
+        x =  listCanvas.at(0)->listPointsDebug.at(i);
+        xl = listCanvas.at(1)->listPointsDebug.at(i);
         r<<     xl(0) * x(0),
                 xl(0) * x(1),
                 xl(0),
@@ -102,7 +105,7 @@ void MainWindow::calculateF()
                 x(0),
                 x(1),
                 1;
-        A.row(i) << r.transpose();
+       A.row(i) << r.transpose();
     }
     //std::cout << A << std::endl;
     Eigen::JacobiSVD<Eigen::MatrixXf> SVD(A, Eigen::ComputeFullV);
@@ -110,13 +113,17 @@ void MainWindow::calculateF()
     F <<    x(0), x(1), x(2),
             x(3), x(4), x(5),
             x(6), x(7), x(8);
+
     applySingularContraints();
     denormalize();
+    F/= F(2,2);
+    F*=1.06047;
     if(DebugSet::isTrackBackMode){
         F <<     2.53304e-06, -3.55338e-05,   0.00943417,
                  3.95356e-05,  2.05369e-06,   -0.0133847,
                   -0.0124648,    0.0103014,      1.06047;
     }
+   // std::cout << F << std::endl;
 }
 
 void MainWindow::applySingularContraints()
@@ -138,6 +145,9 @@ void MainWindow::denormalize()
     Eigen::Matrix3f T =  listPair.at(0)->list.at(0)->T;
 
     F = Tl.transpose() * F * T;
+
+    listPair.at(0)->list.at(0)->denormalize();
+    listPair.at(0)->list.at(1)->denormalize();
 }
 
 void MainWindow::calculateK()
@@ -167,9 +177,16 @@ void MainWindow::calculateE()
     a = singularValues(0);
     b = singularValues(1);
 
-    Eigen::DiagonalMatrix<float, 3,3> D((a+b)/2, (a+b)/2, 0);
+    cout << "E " << a << "  " << b << endl;
+
+    // Eigen::DiagonalMatrix<float, 3,3> D((a+b)/2, (a+b)/2, 0);
+    Eigen::DiagonalMatrix<float, 3,3> D(1,1, 0);
     Eigen::Matrix3f DMat = D.toDenseMatrix();
+    std::cout << DMat << std::endl;
     E = SVD.matrixU() * DMat * SVD.matrixV().transpose();
+
+    E /= E(2,2);
+    E *= 0.034732;
 
     if(DebugSet::isTrackBackMode){
         E<< 1.10747,  -15.6899, 0.652399,
@@ -212,44 +229,33 @@ void MainWindow::calculateP()
     Eigen::MatrixXf P4(3,4);
 
     P1.topLeftCorner(3,3) = U * W * V.transpose();
-//    temp = U * W * V.transpose();
-//    P1.col(0) = temp.col(0);
-//    P1.col(1) = temp.col(1);
-//    P1.col(2) = temp.col(2);
     P1.col(3) = u3;
 
     P2.topLeftCorner(3,3) = U * W * V.transpose();
-//    P2.col(0) = temp.col(0);
-//    P2.col(1) = temp.col(1);
-//    P2.col(2) = temp.col(2);
     P2.col(3) = -u3;
 
     P3.topLeftCorner(3,3) = U * W.transpose() * V.transpose();
-//    P3.col(0) = temp.col(0);
-//    P3.col(1) = temp.col(1);
-//    P3.col(2) = temp.col(2);
     P3.col(3) = u3;
 
     P4.topLeftCorner(3,3) = U * W.transpose() * V.transpose();
-//    P4.col(0) = temp.col(0);
-//    P4.col(1) = temp.col(1);
-//    P4.col(2) = temp.col(2);
     P4.col(3) = -u3;
-
-    std::cout << (U*V.transpose()).determinant() << std::endl;
-//    std::cout << P1 << std::endl;
-//    std::cout << " " << std::endl;
-//    std::cout << P2 << std::endl;
-//    std::cout << " " << std::endl;
-//    std::cout << P3 << std::endl;
-//    std::cout << " " << std::endl;
-//    std::cout << P4 << std::endl;
-//    std::cout << " " << std::endl;
 
     listPair.at(0)->listP.push_back(P1);
     listPair.at(0)->listP.push_back(P2);
     listPair.at(0)->listP.push_back(P3);
     listPair.at(0)->listP.push_back(P4);
+
+//    QString camMatrix   = Util::openFile(DebugSet::packList.at(1).camMatrixPath.toStdString());
+
+    //P1 = Util::parseCamMatrix(camMatrix);
+
+//    camMatrix   = Util::openFile(DebugSet::packList.at(0).camMatrixPath.toStdString());
+//    P2 = Util::parseCamMatrix(camMatrix);
+
+//    P1 = P1 * P2.inverse();
+    //listPair.at(0)->listP.push_back(P1);
+
+//    Util::printQList(listPair.at(0)->listP);
 }
 
 void MainWindow::triangulation()
@@ -293,6 +299,7 @@ void MainWindow::triangulation()
             finalList.push_back(X);
         }
     }
+    newfinalList.push_back(finalList);
 }
 
 void MainWindow::triangulation(Pair& pair)
@@ -318,27 +325,29 @@ void MainWindow::triangulation(Pair& pair)
                 }
                 Eigen::Vector3f x   = L->at(a);
                 Eigen::Vector3f xl  = Ll->at(b);
-//                Eigen::MatrixXf p;
-//                p = pair.list.at(0)->P;
-//                p<<    1,  0,  0,  0,
-//                       0,  1,  0,  0,
-//                       0,  0,  1,  0;
+                x = pair.list.at(0)->K.inverse() * x;
+                xl = pair.list.at(1)->K.inverse() * xl;
+//                Eigen::VectorXf X = Util::linearTriangulation(x, pair.listP.at(j), xl);
+                Eigen::MatrixXf p(3,4);
+                p<<    1,  0,  0,  0,
+                       0,  1,  0,  0,
+                       0,  0,  1,  0;
+                //p = pair.list.at(0)->P;
+                Eigen::MatrixXf pl(3,4);
+                pl = pair.listP.at(j);
+                Eigen::Matrix4f A;
 
-//                Eigen::MatrixXf pl  = pair.list.at(1)->P;
-//                Eigen::Matrix4f A;
+                Eigen::Vector4f v0, v1, v2, v3;
+                v0 = x(0) * p.row(2) - p.row(0);
+                v1 = x(1) * p.row(2) - p.row(1);
+                v2 = xl(0) * pl.row(2) - pl.row(0);
+                v3 = xl(1) * pl.row(2) - pl.row(1);
 
+                A << v0.transpose(), v1.transpose(), v2.transpose(), v3.transpose();
+                Eigen::JacobiSVD<Eigen::MatrixXf> SVD(A, Eigen::ComputeFullV);
+                Eigen::VectorXf X = SVD.matrixV().col(SVD.matrixV().cols() - 1);
+                X /= X(3);
 
-//                Eigen::Vector4f v0, v1, v2, v3;
-//                v0 = x(0) * p.row(2) - p.row(0);
-//                v1 = x(1) * p.row(2) - p.row(1);
-//                v2 = xl(0) * pl.row(2) - pl.row(0);
-//                v3 = xl(1) * pl.row(2) - pl.row(1);
-
-//                A << v0.transpose(), v1.transpose(), v2.transpose(), v3.transpose();
-//                Eigen::JacobiSVD<Eigen::MatrixXf> SVD(A, Eigen::ComputeFullV);
-//                Eigen::VectorXf X = SVD.matrixV().col(SVD.matrixV().cols() - 1);
-//                X /= X(3);
-                Eigen::VectorXf X = Util::linearTriangulation(x, pair.list.at(1)->P, xl);
                 finalList.push_back(X);
             }
         }
@@ -348,8 +357,8 @@ void MainWindow::triangulation(Pair& pair)
 
 void MainWindow::writeFile()
 {
-    QString file;
     for(int j=0; j< newfinalList.length(); j++){
+        QString file;
         QList<Eigen::Vector4f> l;
         l = newfinalList.at(j);
         for(int i = 0 ; i < l.length(); i++){
@@ -358,6 +367,37 @@ void MainWindow::writeFile()
             float z = l.at(i)(2);
             file +=  "v " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + "\n";
         }
+        file += "f 0 1 2\n";
+        file += "f 0 2 3\n";
+        file += "f 0 3 4\n";
+        file += "f 4 3 5\n";
+        file += "f 6 4 5\n";
+        file += "f 6 5 7\n";
+        file += "f 8 5 7\n";
+        file += "f 9 8 7\n";
+        file += "f 9 7 10\n";
+        file += "f 6 5 7\n";
+        file += "f 10 7 5\n";
+        file += "f 10 5 11\n";
+        file += "f 11 3 2\n";
+        file += "f 11 2 12\n";
+
+
         Util::saveFile("assets/points_" + QString::number(j) + ".obj", file);
     }
+
+    std::ofstream reg("assets/DATA.txt");
+    reg << "Fundamental Matrix: " << endl << F << endl;
+    reg << endl;
+    reg << "Essential Matrix: " << endl << E << endl;
+    reg << endl;
+    reg << "Camera Matrices" << endl;
+
+     for(int i = 0 ; i < listPair.at(0)->listP.length() ; i++){
+        reg << "P0: " << endl
+        << listPair.at(0)->listP.at(i) <<endl;
+    }
+    reg << endl;
+    reg << "Calibration Matrices" << endl << "K: " << endl << listCanvas.at(0)->K << endl << "K': " << endl << listCanvas.at(1)->K << endl;
+    reg.close();
 }

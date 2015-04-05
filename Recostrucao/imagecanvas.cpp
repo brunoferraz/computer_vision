@@ -40,7 +40,8 @@ void ImageCanvas::findPoints()
 
 void ImageCanvas::normalize()
 {
-    QList<Eigen::Vector3f> *L;
+    QList<Eigen::Vector3f> *L, LN;
+    float distance = 0;
     if(DebugSet::isDebug){
         L = &listPointsDebug;
     }else{
@@ -52,35 +53,113 @@ void ImageCanvas::normalize()
     xmin = 0;
     ymax = 0;
     ymin = 0;
+    Eigen::Vector3f central = Eigen::Vector3f::Zero();
     for(int i = 0; i < L->length(); i++){
         xmax = std::max(L->at(i)(0), xmax);
         ymax = std::max(L->at(i)(1), ymax);
         xmin = std::min(L->at(i)(0), xmin);
         ymin = std::min(L->at(i)(1), ymin);
+        central(0) += L->at(i)(0);
+        central(1) += L->at(i)(1);
     }
-    Eigen::Vector3f c;
-    c << -(xmax - xmin)/2, -(ymax - ymin)/2, 1;
-    float distance = 0;
-    for(int i = 0; i < L->length(); i++){
-        Eigen::Vector3f d;
-        d = L->at(i) - c;
-        distance = std::max(distance, d.norm());
-    }
-    float r2 = std::sqrt(2);
-    float factor = r2/distance;
-    Eigen::Matrix3f s = Eigen::MatrixXf::Identity(3,3);
-    Eigen::Matrix3f m = Eigen::MatrixXf::Identity(3,3);
-    //calculate translate matrix
-    m.col(2) << c;
-    //calculate scaleMatrix
-    m = m * factor;
-    T = m;
-    Tl = T.inverse();
-    //Multiply points per normalization Matrix
+    central /= L->length();
+    QList<Eigen::Vector3f> normalizedPoints;
     for(int i = 0; i < L->length(); i++){
         Eigen::Vector3f v;
-        v = T * L->at(i);
-        L->replace(i,v);
+        v(0) = L->at(i)(0)- central(0);
+        v(1) = L->at(i)(1)- central(1);
+        v(2) = L->at(i)(2);
+        normalizedPoints.push_back(v);
+    }
+    for(int i = 0; i < L->length(); i++){
+        float auxDistance = pow(normalizedPoints.at(i)(0),2) + pow(normalizedPoints.at(i)(1),2);
+        auxDistance = sqrt(auxDistance);
+        distance += auxDistance;
+    }
+    distance /= L->length();
+
+    distance = sqrt(2)*distance;
+
+    T = Eigen::Matrix3f::Identity();
+    T(0,2) = central(0) * distance;
+    T(0,2) = central(1) * distance;
+    T(0, 0) = T(1, 1) = distance;
+
+    Tl = T.inverse();
+
+    for(int i = 0; i < L->length(); i++){
+        listPointsDebug.replace(i, normalizedPoints.at(i));
+        listPoints.replace(i, normalizedPoints.at(i));
+    }
+
+//    central /= L->length();
+
+//    for(int i = 0; i < L->length(); i++){
+//        Eigen::Vector3f v;
+//        v << L->at(i)(0) - central(0), L->at(i)(1) - central(1), L->at(i)(2);
+//        LN.push_back(v);
+//    }
+//    float distance = 0;
+//    for(int i = 0; i < L->length(); i++){
+//        float auxDistance = std::pow(LN.at(i)(0),2) + std::pow(LN.at(i)(0),2);
+//        auxDistance = std::sqrt(auxDistance);
+//        distance += auxDistance;
+//    }
+
+//    distance /= L->length();
+
+//    T = Eigen::Matrix3f::Identity();
+//    T(0,2) = central(0) * distance;
+//    T(1,2) = central(1) * distance;
+
+//    T(0, 0) = T(1,1) = distance;
+//    Tl = T.inverse();
+
+//    std::cout << (T * LN.at(0)) << std::endl;
+//    for(int i = 0; i < L->length(); i++){
+//        Eigen::Vector3f v;
+//        //v << LN.at(i) * T;
+//        //L->push_back(v);
+//    }
+
+//    Eigen::Vector3f c;
+//    c << -(xmax - xmin)/2, -(ymax - ymin)/2, 1;
+//    float distance = 0;
+//    for(int i = 0; i < L->length(); i++){
+//        Eigen::Vector3f d;
+//        d = L->at(i) - c;
+//        distance = std::max(distance, d.norm());
+//    }
+//    float r2 = std::sqrt(2);
+//    float factor = r2/distance;
+//    Eigen::Matrix3f s = Eigen::MatrixXf::Identity(3,3);
+//    Eigen::Matrix3f m = Eigen::MatrixXf::Identity(3,3);
+//    //calculate translate matrix
+//    m.col(2) << c;
+//    //calculate scaleMatrix
+//    m = m * factor;
+//    T = m;
+//    Tl = T.inverse();
+//    //Multiply points per normalization Matrix
+//    for(int i = 0; i < L->length(); i++){
+//        Eigen::Vector3f v;
+//        v = T * L->at(i);
+//        L->replace(i,v);
+    //    }
+}
+
+void ImageCanvas::denormalize()
+{
+    QList<Eigen::Vector3f> *L;
+    if(DebugSet::isDebug){
+        L = &listPointsDebug;
+    }else{
+        L = &listPoints;
+    }
+    for(int i = 0; i < L->length(); i++){
+        Eigen::Vector3f v;
+        v = Tl * L->at(i);
+        L->replace(i, v);
     }
 }
 
@@ -88,7 +167,12 @@ void ImageCanvas::calculateK()
 {
     Eigen::Matrix3f R, Q;
     Util::RQdecomposition(P, R, Q);
+    //Util::QRdecomposition(P, R, Q);
+
+
+
     K = R;
+    //std::cout << K << std::endl;
 }
 
 void ImageCanvas::start(DebugPack p)

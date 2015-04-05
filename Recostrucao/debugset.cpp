@@ -7,6 +7,22 @@ DebugSet::DebugSet()
 
 void DebugSet::start()
 {
+    packList.push_back(DebugPack("assets/houseBruno.000.corners",
+                                  "assets/house.000.lines",
+                                  "assets/house.000.pgm",
+                                  "assets/house.000.P"));
+    packList.push_back(DebugPack("assets/houseBruno.001.corners",
+                                  "assets/house.001.lines",
+                                  "assets/house.001.pgm",
+                                  "assets/house.001.P"));
+    packList.push_back(DebugPack("assets/houseLuis.000.corners",
+                                  "assets/house.000.lines",
+                                  "assets/houseLuis.000.pgm",
+                                  "assets/house.000.P"));
+    packList.push_back(DebugPack("assets/houseLuis.001.corners",
+                                  "assets/house.001.lines",
+                                  "assets/houseLuis.001.pgm",
+                                  "assets/house.001.P"));
     packList.push_back(DebugPack("assets/house.000.corners",
                                   "assets/house.000.lines",
                                   "assets/house.000.pgm",
@@ -50,4 +66,6 @@ void DebugSet::start()
 }
 QList<DebugPack> DebugSet::packList;
 int DebugSet::imageNumbers = 2;
-QString DebugSet::matchFilePath = "assets/house.nview-corners";
+//QString DebugSet::matchFilePath = "assets/house.nview-corners";
+//QString DebugSet::matchFilePath = "assets/houseLuis.nview-corners";
+QString DebugSet::matchFilePath = "assets/houseBruno.nview-corners";
