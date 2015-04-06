@@ -367,20 +367,29 @@ void MainWindow::writeFile()
             float z = l.at(i)(2);
             file +=  "v " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + "\n";
         }
-        file += "f 0 1 2\n";
-        file += "f 0 2 3\n";
-        file += "f 0 3 4\n";
-        file += "f 4 3 5\n";
-        file += "f 6 4 5\n";
-        file += "f 6 5 7\n";
-        file += "f 8 5 7\n";
-        file += "f 9 8 7\n";
-        file += "f 9 7 10\n";
-        file += "f 6 5 7\n";
-        file += "f 10 7 5\n";
-        file += "f 10 5 11\n";
-        file += "f 11 3 2\n";
-        file += "f 11 2 12\n";
+        file += "f 1 2 3\n";
+        file += "f 1 3 4\n";
+        file += "f 1 4 5\n";
+        file += "f 5 4 6\n";
+        file += "f 7 5 6\n";
+        file += "f 7 6 8\n";
+        file += "f 9 7 8\n";
+        file += "f 10 9 8\n";
+        file += "f 10 8 11\n";
+        file += "f 11 8 6\n";
+        file += "f 11 6 12\n";
+        file += "f 4 3 6\n";
+        file += "f 6 3 14\n";
+        file += "f 12 6 14\n";
+        file += "f 12 14 13\n";
+
+//        file += "f 7 4 3\n";
+//        file += "f 3 4 0\n";
+//        file += "f 3 0 2\n";
+//        file += "f 0 1 2\n";
+//        file += "f 2 1 5\n";
+//        file += "f 2 5 6\n";
+
 
 
         Util::saveFile("assets/points_" + QString::number(j) + ".obj", file);
